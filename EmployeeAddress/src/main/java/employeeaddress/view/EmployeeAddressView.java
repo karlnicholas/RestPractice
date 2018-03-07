@@ -1,56 +1,62 @@
 package employeeaddress.view;
 
-import employeeaddress.model.EmployeeAddress;
-
 public class EmployeeAddressView {
-    private final Long id;
+    private Long id;
     
-    private final String address1;
-    private final String address2;
-    private final String address3;
-    private final String address4;
-    private final String state;
-    private final String country;
-    
-    public EmployeeAddressView(EmployeeAddress employeeAddress) {
-        id = employeeAddress.getId();
-        address1 = employeeAddress.getAddress1();
-        address2 = employeeAddress.getAddress2();
-        address3 = employeeAddress.getAddress3();
-        address4 = employeeAddress.getAddress4();
-        state = employeeAddress.getState();
-        country = employeeAddress.getCountry();        
-    }
-    public EmployeeAddress asEmployeeAddress() {
-        EmployeeAddress employeeAddress = new EmployeeAddress();
-        employeeAddress.setId(id);
-        employeeAddress.setAddress1(address1);
-        employeeAddress.setAddress2(address2);
-        employeeAddress.setAddress3(address3);
-        employeeAddress.setAddress4(address4);
-        employeeAddress.setState(state);
-        employeeAddress.setCountry(country);
-        return employeeAddress;
-    }
+    private String address1;
+    private String address2;
+    private String address3;
+    private String address4;
+    private String state;
+    private String country;
+    private String empId;
+
     public Long getId() {
         return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
     public String getAddress1() {
         return address1;
     }
+    public void setAddress1(String address1) {
+        this.address1 = address1;
+    }
     public String getAddress2() {
         return address2;
+    }
+    public void setAddress2(String address2) {
+        this.address2 = address2;
     }
     public String getAddress3() {
         return address3;
     }
+    public void setAddress3(String address3) {
+        this.address3 = address3;
+    }
     public String getAddress4() {
         return address4;
+    }
+    public void setAddress4(String address4) {
+        this.address4 = address4;
     }
     public String getState() {
         return state;
     }
+    public void setState(String state) {
+        this.state = state;
+    }
     public String getCountry() {
         return country;
+    }
+    public void setCountry(String country) {
+        this.country = country;
+    }
+    public String getEmpId() {
+        return empId;
+    }
+    public void setEmpId(String empId) {
+        this.empId = empId;
     }
 }

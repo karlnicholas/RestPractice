@@ -1,39 +1,39 @@
 package employeeproject.view;
 
-import employeeproject.model.EmployeeProject;
-
 public class EmployeeProjectView {
-    private final Long id;
-    private final String projectId;
-    private final String projectName;
-    private final String techstack;
-
-    public EmployeeProjectView(EmployeeProject employeeProject) {
-        id = employeeProject.getId();
-        projectId = employeeProject.getProjectId();
-        projectName = employeeProject.getProjectName();
-        techstack = employeeProject.getTechstack();
+    private Long id;
+    private String projectId;
+    private String projectName;
+    private String techstack;
+    private String empId;
+    public Long getId() {
+        return id;
     }
-    
-    public EmployeeProject asEmployeeProject() {
-        EmployeeProject employeeProject = new EmployeeProject();
-        employeeProject.setId(id);
-        employeeProject.setProjectId(projectId);
-        employeeProject.setProjectName(projectName);
-        employeeProject.setTechstack(techstack);
-        return employeeProject;
+    public void setId(Long id) {
+        this.id = id;
     }
-
     public String getProjectId() {
         return projectId;
+    }
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
     public String getProjectName() {
         return projectName;
     }
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
     public String getTechstack() {
         return techstack;
     }
-    public Long getId() {
-        return id;
+    public void setTechstack(String techstack) {
+        this.techstack = techstack;
+    }
+    public String getEmpId() {
+        return empId;
+    }
+    public void setEmpId(String empId) {
+        this.empId = empId;
     }
 }

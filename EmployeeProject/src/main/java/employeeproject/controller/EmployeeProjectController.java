@@ -25,23 +25,23 @@ public class EmployeeProjectController {
     @GetMapping(value="/employee/project/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeProjectView> getEmployeeProject(@PathVariable("id") Long id) {
         logger.debug("ID = " + id);
-        return ResponseEntity.ok(new EmployeeProjectView(repository.getOne(id)));
+        return ResponseEntity.ok(repository.getOne(id).asEmployeeProjectView());
     }
     
     @PostMapping(value="/employee/project/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeProjectView> postEmployeeProject(EmployeeProjectView employeeProjectView) {
-        return ResponseEntity.ok(new EmployeeProjectView(repository.save(employeeProjectView.asEmployeeProject())));
+        return ResponseEntity.ok(repository.save(new EmployeeProject(employeeProjectView)).asEmployeeProjectView());
     }
 
     @PutMapping(value="/employee/project/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeProjectView> putEmployeeProject(EmployeeProjectView employeeProjectView) {
-        return ResponseEntity.ok(new EmployeeProjectView(repository.save(employeeProjectView.asEmployeeProject())));
+        return ResponseEntity.ok(repository.save(new EmployeeProject(employeeProjectView)).asEmployeeProjectView());
     }
 
     @DeleteMapping(value="/employee/project/delete/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeProjectView> deleteEmployeeProject(@PathVariable("id") Long id) {
-        EmployeeProject ed = repository.getOne(id);
-        repository.delete(ed);        
-        return ResponseEntity.ok(new EmployeeProjectView(ed));
+        EmployeeProject employeeProject = repository.getOne(id);
+        repository.delete(employeeProject);        
+        return ResponseEntity.ok(employeeProject.asEmployeeProjectView());
     }
 }

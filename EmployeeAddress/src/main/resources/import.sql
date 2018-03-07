@@ -1,1 +1,1 @@
-insert into employee_address values (1, 'Karl', '767691', 'Sr. Software Developer', 'Analyze, Design, Code, and Deploy Enterprise Applications', 100000.00);
+insert into employee_address (id, address1, address2, address3, address4, state, country, emp_id) values (1, '13440 N 44TH ST', 'APT 2208', 'PHOENIX', '', 'AZ', 'US', 1);

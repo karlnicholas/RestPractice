@@ -3,8 +3,13 @@ package employeeaddress.model;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import employeeaddress.view.EmployeeAddressView;
 
 @Entity
+@Table(uniqueConstraints={@UniqueConstraint(columnNames="empId")})
 public class EmployeeAddress {
     @Id @GeneratedValue
     private Long id;
@@ -15,6 +20,33 @@ public class EmployeeAddress {
     private String address4;
     private String state;
     private String country;
+    private String empId;
+
+    public EmployeeAddress() {}
+    
+    public EmployeeAddress(EmployeeAddressView employeeAddressView) {
+        id = employeeAddressView.getId();
+        address1 = employeeAddressView.getAddress1();
+        address2 = employeeAddressView.getAddress2();
+        address3 = employeeAddressView.getAddress3();
+        address4 = employeeAddressView.getAddress4();
+        state = employeeAddressView.getState();
+        country = employeeAddressView.getCountry();  
+        empId = employeeAddressView.getEmpId();
+    }
+    public EmployeeAddressView asEmployeeAddressView() {
+        EmployeeAddressView employeeAddressView = new EmployeeAddressView();
+        employeeAddressView.setId(id);
+        employeeAddressView.setAddress1(address1);
+        employeeAddressView.setAddress2(address2);
+        employeeAddressView.setAddress3(address3);
+        employeeAddressView.setAddress4(address4);
+        employeeAddressView.setState(state);
+        employeeAddressView.setCountry(country);
+        employeeAddressView.setEmpId(empId);
+        return employeeAddressView;
+    }
+    
     public Long getId() {
         return id;
     }
@@ -56,5 +88,11 @@ public class EmployeeAddress {
     }
     public void setCountry(String country) {
         this.country = country;
+    }
+    public String getEmpId() {
+        return empId;
+    }
+    public void setEmpId(String empId) {
+        this.empId = empId;
     }   
 }
