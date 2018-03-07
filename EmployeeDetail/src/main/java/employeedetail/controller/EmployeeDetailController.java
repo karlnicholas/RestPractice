@@ -22,23 +22,23 @@ public class EmployeeDetailController {
     private EmployeeDetailRepository repository;
     private static final Logger logger = LoggerFactory.getLogger(EmployeeDetailController.class);
     
-    @GetMapping(value="/employee/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/employee/detail/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeDetailView> getEmployeeDetail(@PathVariable("id") Long id) {
         logger.debug("ID = " + id);
         return ResponseEntity.ok(new EmployeeDetailView(repository.getOne(id)));
     }
     
-    @PostMapping(value="/employee/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="/employee/detail/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeDetailView> postEmployeeDetail(EmployeeDetailView employeeDetailView) {
         return ResponseEntity.ok(new EmployeeDetailView(repository.save(employeeDetailView.asEmployeeDetail())));
     }
 
-    @PutMapping(value="/employee/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value="/employee/detail/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeDetailView> putEmployeeDetail(EmployeeDetailView employeeDetailView) {
         return ResponseEntity.ok(new EmployeeDetailView(repository.save(employeeDetailView.asEmployeeDetail())));
     }
 
-    @DeleteMapping(value="/employee/delete/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value="/employee/detail/delete/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeDetailView> deleteEmployeeDetail(@PathVariable("id") Long id) {
         EmployeeDetail ed = repository.getOne(id);
         repository.delete(ed);        
