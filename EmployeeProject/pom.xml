@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>assignment</groupId>
-    <artifactId>employeedetail</artifactId>
+    <artifactId>employeeproject</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>EmployeeDetail</name>
+    <name>Employee Project</name>
     <description>Demo project for Spring Boot</description>
 
     <parent>

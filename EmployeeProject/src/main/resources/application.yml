@@ -1,13 +1,11 @@
-server:  
-  port: 9000
-
-spring:  
+spring:
+  jpa:
+    show-sql: true
   application:
-    name: Employee Project
-
-eureka:  
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+    name: EmployeeProject
+server:
+  port: 8092
+eureka:
   instance:
-    preferIpAddress: true
+    lease-renewal-interval-in-seconds: 1
+    lease-expiration-duration-in-seconds: 2

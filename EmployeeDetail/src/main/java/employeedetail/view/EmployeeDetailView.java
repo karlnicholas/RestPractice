@@ -2,8 +2,6 @@ package employeedetail.view;
 
 import java.math.BigDecimal;
 
-import employeedetail.model.EmployeeDetail;
-
 public class EmployeeDetailView {
     private Long id;
     private String name;

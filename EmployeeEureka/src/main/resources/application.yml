@@ -1,11 +1,15 @@
-server:  
-  port: 8761
-
-eureka:  
+eureka:
   instance:
     hostname: localhost
   client:
-    registerWithEureka: false
-    fetchRegistry: false
-    serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    register-with-eureka: false
+    fetch-registry: false
+server:
+  port: 8761
+spring:
+  thymeleaf:
+    enabled: false 
+logging:
+  level:
+    com.netflix.eureka: OFF
+    com.netflix.discovery: OFF
