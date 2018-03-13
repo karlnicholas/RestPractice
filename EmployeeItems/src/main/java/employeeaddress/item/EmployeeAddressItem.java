@@ -1,6 +1,6 @@
-package employeeaddress.view;
+package employeeaddress.item;
 
-public class EmployeeAddressView {
+public class EmployeeAddressItem {
     private Long id;
     
     private String address1;

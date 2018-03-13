@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import employeedetail.view.EmployeeDetailView;
+import employeedetail.item.EmployeeDetailItem;
 
 @Entity
 @Table(uniqueConstraints={@UniqueConstraint(columnNames="empId")})
@@ -22,24 +22,24 @@ public class EmployeeDetail {
     private String roleDescription;
 
     public EmployeeDetail() {}
-    public EmployeeDetail(EmployeeDetailView employeeDetailView) {
-        id = employeeDetailView.getId();
-        name = employeeDetailView.getName();
-        role = employeeDetailView.getRole();
-        salary = employeeDetailView.getSalary();
-        roleDescription = employeeDetailView.getRoleDescription();
-        empId = employeeDetailView.getEmpId();
+    public EmployeeDetail(EmployeeDetailItem employeeDetailItem) {
+        id = employeeDetailItem.getId();
+        name = employeeDetailItem.getName();
+        role = employeeDetailItem.getRole();
+        salary = employeeDetailItem.getSalary();
+        roleDescription = employeeDetailItem.getRoleDescription();
+        empId = employeeDetailItem.getEmpId();
     }
     
-    public EmployeeDetailView asEmployeeDetailView() {
-        EmployeeDetailView employeeDetailView = new EmployeeDetailView();
-        employeeDetailView.setId(id);
-        employeeDetailView.setName(name);
-        employeeDetailView.setEmpId(empId);
-        employeeDetailView.setRole(role);
-        employeeDetailView.setSalary(salary);
-        employeeDetailView.setRoleDescription(roleDescription);
-        return employeeDetailView;
+    public EmployeeDetailItem asEmployeeDetailItem() {
+        EmployeeDetailItem employeeDetailItem = new EmployeeDetailItem();
+        employeeDetailItem.setId(id);
+        employeeDetailItem.setName(name);
+        employeeDetailItem.setEmpId(empId);
+        employeeDetailItem.setRole(role);
+        employeeDetailItem.setSalary(salary);
+        employeeDetailItem.setRoleDescription(roleDescription);
+        return employeeDetailItem;
     }
 
     public Long getId() {

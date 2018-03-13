@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import employeeproject.model.EmployeeProject;
 import employeeproject.service.EmployeeProjectRepository;
-import employeeproject.view.EmployeeProjectView;
+import employeeproject.item.EmployeeProjectItem;
 
 @RestController
 public class EmployeeProjectController {
@@ -23,25 +23,25 @@ public class EmployeeProjectController {
     private static final Logger logger = LoggerFactory.getLogger(EmployeeProjectController.class);
     
     @GetMapping(value="/employee/project/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeProjectView> getEmployeeProject(@PathVariable("id") Long id) {
+    public ResponseEntity<EmployeeProjectItem> getEmployeeProject(@PathVariable("id") Long id) {
         logger.debug("ID = " + id);
-        return ResponseEntity.ok(repository.getOne(id).asEmployeeProjectView());
+        return ResponseEntity.ok(repository.getOne(id).asEmployeeProjectItem());
     }
     
     @PostMapping(value="/employee/project/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeProjectView> postEmployeeProject(EmployeeProjectView employeeProjectView) {
-        return ResponseEntity.ok(repository.save(new EmployeeProject(employeeProjectView)).asEmployeeProjectView());
+    public ResponseEntity<EmployeeProjectItem> postEmployeeProject(EmployeeProjectItem employeeProjectItem) {
+        return ResponseEntity.ok(repository.save(new EmployeeProject(employeeProjectItem)).asEmployeeProjectItem());
     }
 
     @PutMapping(value="/employee/project/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeProjectView> putEmployeeProject(EmployeeProjectView employeeProjectView) {
-        return ResponseEntity.ok(repository.save(new EmployeeProject(employeeProjectView)).asEmployeeProjectView());
+    public ResponseEntity<EmployeeProjectItem> putEmployeeProject(EmployeeProjectItem employeeProjectItem) {
+        return ResponseEntity.ok(repository.save(new EmployeeProject(employeeProjectItem)).asEmployeeProjectItem());
     }
 
     @DeleteMapping(value="/employee/project/delete/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeProjectView> deleteEmployeeProject(@PathVariable("id") Long id) {
+    public ResponseEntity<EmployeeProjectItem> deleteEmployeeProject(@PathVariable("id") Long id) {
         EmployeeProject employeeProject = repository.getOne(id);
         repository.delete(employeeProject);        
-        return ResponseEntity.ok(employeeProject.asEmployeeProjectView());
+        return ResponseEntity.ok(employeeProject.asEmployeeProjectItem());
     }
 }

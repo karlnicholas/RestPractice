@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import employeeaddress.model.EmployeeAddress;
 import employeeaddress.service.EmployeeAddressRepository;
-import employeeaddress.view.EmployeeAddressView;
+import employeeaddress.item.EmployeeAddressItem;
 
 @RestController
 public class EmployeeAddressController {
@@ -23,25 +23,25 @@ public class EmployeeAddressController {
     private static final Logger logger = LoggerFactory.getLogger(EmployeeAddressController.class);
     
     @GetMapping(value="/employee/address/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressView> getEmployeeAddress(@PathVariable("id") Long id) {
+    public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable("id") Long id) {
         logger.debug("ID = " + id);
-        return ResponseEntity.ok(repository.getOne(id).asEmployeeAddressView());
+        return ResponseEntity.ok(repository.getOne(id).asEmployeeAddressItem());
     }
     
     @PostMapping(value="/employee/address/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressView> postEmployeeAddress(EmployeeAddressView employeeAddressView) {
-        return ResponseEntity.ok(repository.save(new EmployeeAddress(employeeAddressView)).asEmployeeAddressView());
+    public ResponseEntity<EmployeeAddressItem> postEmployeeAddress(EmployeeAddressItem employeeAddressItem) {
+        return ResponseEntity.ok(repository.save(new EmployeeAddress(employeeAddressItem)).asEmployeeAddressItem());
     }
 
     @PutMapping(value="/employee/address/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressView> putEmployeeAddress(EmployeeAddressView employeeAddressView) {
-        return ResponseEntity.ok(repository.save(new EmployeeAddress(employeeAddressView)).asEmployeeAddressView());
+    public ResponseEntity<EmployeeAddressItem> putEmployeeAddress(EmployeeAddressItem employeeAddressItem) {
+        return ResponseEntity.ok(repository.save(new EmployeeAddress(employeeAddressItem)).asEmployeeAddressItem());
     }
 
     @DeleteMapping(value="/employee/address/delete/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressView> deleteEmployeeAddress(@PathVariable("id") Long id) {
+    public ResponseEntity<EmployeeAddressItem> deleteEmployeeAddress(@PathVariable("id") Long id) {
         EmployeeAddress ed = repository.getOne(id);
         repository.delete(ed);        
-        return ResponseEntity.ok(ed.asEmployeeAddressView());
+        return ResponseEntity.ok(ed.asEmployeeAddressItem());
     }
 }

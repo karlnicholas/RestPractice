@@ -1,8 +1,8 @@
-package employeedetail.view;
+package employeedetail.item;
 
 import java.math.BigDecimal;
 
-public class EmployeeDetailView {
+public class EmployeeDetailItem {
     private Long id;
     private String name;
     private String role;

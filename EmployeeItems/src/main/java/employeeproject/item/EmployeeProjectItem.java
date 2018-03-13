@@ -1,6 +1,6 @@
-package employeeproject.view;
+package employeeproject.item;
 
-public class EmployeeProjectView {
+public class EmployeeProjectItem {
     private Long id;
     private String projectId;
     private String projectName;

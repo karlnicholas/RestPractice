@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import employeeproject.view.EmployeeProjectView;
+import employeeproject.item.EmployeeProjectItem;
 
 @Entity
 @Table(uniqueConstraints={@UniqueConstraint(columnNames="empId")})
@@ -20,22 +20,22 @@ public class EmployeeProject {
     private String empId;
 
     public EmployeeProject() {}
-    public EmployeeProject(EmployeeProjectView employeeProjectView) {
-        id = employeeProjectView.getId();
-        projectId = employeeProjectView.getProjectId();
-        projectName = employeeProjectView.getProjectName();
-        techstack = employeeProjectView.getTechstack();
-        empId = employeeProjectView.getEmpId();
+    public EmployeeProject(EmployeeProjectItem employeeProjectItem) {
+        id = employeeProjectItem.getId();
+        projectId = employeeProjectItem.getProjectId();
+        projectName = employeeProjectItem.getProjectName();
+        techstack = employeeProjectItem.getTechstack();
+        empId = employeeProjectItem.getEmpId();
     }
     
-    public EmployeeProjectView asEmployeeProjectView() {
-        EmployeeProjectView employeeProjectView = new EmployeeProjectView();
-        employeeProjectView.setId(id);
-        employeeProjectView.setProjectId(projectId);
-        employeeProjectView.setProjectName(projectName);
-        employeeProjectView.setTechstack(techstack);
-        employeeProjectView.setEmpId(empId);
-        return employeeProjectView;
+    public EmployeeProjectItem asEmployeeProjectItem() {
+        EmployeeProjectItem employeeProjectItem = new EmployeeProjectItem();
+        employeeProjectItem.setId(id);
+        employeeProjectItem.setProjectId(projectId);
+        employeeProjectItem.setProjectName(projectName);
+        employeeProjectItem.setTechstack(techstack);
+        employeeProjectItem.setEmpId(empId);
+        return employeeProjectItem;
     }
     public Long getId() {
         return id;

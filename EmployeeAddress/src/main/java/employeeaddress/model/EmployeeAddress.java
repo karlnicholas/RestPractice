@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import employeeaddress.view.EmployeeAddressView;
+import employeeaddress.item.EmployeeAddressItem;
 
 @Entity
 @Table(uniqueConstraints={@UniqueConstraint(columnNames="empId")})
@@ -24,27 +24,27 @@ public class EmployeeAddress {
 
     public EmployeeAddress() {}
     
-    public EmployeeAddress(EmployeeAddressView employeeAddressView) {
-        id = employeeAddressView.getId();
-        address1 = employeeAddressView.getAddress1();
-        address2 = employeeAddressView.getAddress2();
-        address3 = employeeAddressView.getAddress3();
-        address4 = employeeAddressView.getAddress4();
-        state = employeeAddressView.getState();
-        country = employeeAddressView.getCountry();  
-        empId = employeeAddressView.getEmpId();
+    public EmployeeAddress(EmployeeAddressItem employeeAddressItem) {
+        id = employeeAddressItem.getId();
+        address1 = employeeAddressItem.getAddress1();
+        address2 = employeeAddressItem.getAddress2();
+        address3 = employeeAddressItem.getAddress3();
+        address4 = employeeAddressItem.getAddress4();
+        state = employeeAddressItem.getState();
+        country = employeeAddressItem.getCountry();  
+        empId = employeeAddressItem.getEmpId();
     }
-    public EmployeeAddressView asEmployeeAddressView() {
-        EmployeeAddressView employeeAddressView = new EmployeeAddressView();
-        employeeAddressView.setId(id);
-        employeeAddressView.setAddress1(address1);
-        employeeAddressView.setAddress2(address2);
-        employeeAddressView.setAddress3(address3);
-        employeeAddressView.setAddress4(address4);
-        employeeAddressView.setState(state);
-        employeeAddressView.setCountry(country);
-        employeeAddressView.setEmpId(empId);
-        return employeeAddressView;
+    public EmployeeAddressItem asEmployeeAddressItem() {
+        EmployeeAddressItem employeeAddressItem = new EmployeeAddressItem();
+        employeeAddressItem.setId(id);
+        employeeAddressItem.setAddress1(address1);
+        employeeAddressItem.setAddress2(address2);
+        employeeAddressItem.setAddress3(address3);
+        employeeAddressItem.setAddress4(address4);
+        employeeAddressItem.setState(state);
+        employeeAddressItem.setCountry(country);
+        employeeAddressItem.setEmpId(empId);
+        return employeeAddressItem;
     }
     
     public Long getId() {
