@@ -39,10 +39,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-        </dependency>
-        <dependency>
             <groupId>assignment</groupId>
             <artifactId>employeeitems</artifactId>
             <version>0.0.1-SNAPSHOT</version>
