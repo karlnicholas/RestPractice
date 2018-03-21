@@ -1,6 +1,8 @@
 spring:
   application:
     name: EmployeeDetail
+  jpa:
+    show-sql: false
 server:
   port: 0
 eureka:

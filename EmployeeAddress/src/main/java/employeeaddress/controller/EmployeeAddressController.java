@@ -22,10 +22,10 @@ public class EmployeeAddressController {
     private EmployeeAddressRepository repository;
     private static final Logger logger = LoggerFactory.getLogger(EmployeeAddressController.class);
     
-    @GetMapping(value="/employee/address/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable("id") Long id) {
-        logger.debug("ID = " + id);
-        return ResponseEntity.ok(repository.getOne(id).asEmployeeAddressItem());
+    @GetMapping(value="/employee/address/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable("empId") Integer empId) {
+        logger.debug("EmployeeAddressController::getEmployeeAddress empId = " + empId);
+        return ResponseEntity.ok(repository.getOne(empId).asEmployeeAddressItem());
     }
     
     @PostMapping(value="/employee/address/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -38,9 +38,9 @@ public class EmployeeAddressController {
         return ResponseEntity.ok(repository.save(new EmployeeAddress(employeeAddressItem)).asEmployeeAddressItem());
     }
 
-    @DeleteMapping(value="/employee/address/delete/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressItem> deleteEmployeeAddress(@PathVariable("id") Long id) {
-        EmployeeAddress ed = repository.getOne(id);
+    @DeleteMapping(value="/employee/address/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EmployeeAddressItem> deleteEmployeeAddress(@PathVariable("empId") Integer empId) {
+        EmployeeAddress ed = repository.getOne(empId);
         repository.delete(ed);        
         return ResponseEntity.ok(ed.asEmployeeAddressItem());
     }

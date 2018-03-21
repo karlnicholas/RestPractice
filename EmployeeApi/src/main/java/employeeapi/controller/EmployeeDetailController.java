@@ -16,11 +16,11 @@ import employeedetail.item.EmployeeDetailItem;
 @RestController
 public class EmployeeDetailController {
     @Autowired
-    EmployeeDetailClient employeeDetailClient;
+    private EmployeeDetailClient employeeDetailClient;
     
-    @GetMapping(value="/employee/detail/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeDetailItem> getEmployeeDetail(@PathVariable("id") Long id) {
-        return employeeDetailClient.getEmployeeDetail(id);
+    @GetMapping(value="/employee/detail/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EmployeeDetailItem> getEmployeeDetail(@PathVariable("empId") Integer empId) {
+        return employeeDetailClient.getEmployeeDetail(empId);
     }
     
     @PostMapping(value="/employee/detail/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -33,15 +33,15 @@ public class EmployeeDetailController {
         return employeeDetailClient.putEmployeeDetail(employeeDetailItem);
     }
 
-    @DeleteMapping(value="/employee/detail/delete/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeDetailItem> deleteEmployeeDetail(@PathVariable("id") Long id) {
-        return employeeDetailClient.deleteEmployeeDetail(id);
+    @DeleteMapping(value="/employee/detail/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EmployeeDetailItem> deleteEmployeeDetail(@PathVariable("empId") Integer empId) {
+        return employeeDetailClient.deleteEmployeeDetail(empId);
     }
     
     @FeignClient(name="EmployeeDetail")
-    interface EmployeeDetailClient {
-        @GetMapping(value="/employee/detail/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeDetailItem> getEmployeeDetail(@PathVariable("id") Long id);
+    public interface EmployeeDetailClient {
+        @GetMapping(value="/employee/detail/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<EmployeeDetailItem> getEmployeeDetail(@PathVariable("empId") Integer empId);
         
         @PostMapping(value="/employee/detail/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeDetailItem> postEmployeeDetail(EmployeeDetailItem employeeDetailItem);
@@ -49,7 +49,7 @@ public class EmployeeDetailController {
         @PutMapping(value="/employee/detail/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeDetailItem> putEmployeeDetail(EmployeeDetailItem employeeDetailItem);
 
-        @DeleteMapping(value="/employee/detail/delete/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeDetailItem> deleteEmployeeDetail(@PathVariable("id") Long id);
+        @DeleteMapping(value="/employee/detail/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<EmployeeDetailItem> deleteEmployeeDetail(@PathVariable("empId") Integer empId);
     }
 }

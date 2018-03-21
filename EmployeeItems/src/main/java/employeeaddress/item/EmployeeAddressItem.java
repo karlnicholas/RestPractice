@@ -1,21 +1,19 @@
 package employeeaddress.item;
 
 public class EmployeeAddressItem {
-    private Long id;
-    
+    private Integer empId;
     private String address1;
     private String address2;
     private String address3;
     private String address4;
     private String state;
     private String country;
-    private String empId;
 
-    public Long getId() {
-        return id;
+    public Integer getEmpId() {
+        return empId;
     }
-    public void setId(Long id) {
-        this.id = id;
+    public void setEmpId(Integer empId) {
+        this.empId = empId;
     }
     public String getAddress1() {
         return address1;
@@ -52,11 +50,5 @@ public class EmployeeAddressItem {
     }
     public void setCountry(String country) {
         this.country = country;
-    }
-    public String getEmpId() {
-        return empId;
-    }
-    public void setEmpId(String empId) {
-        this.empId = empId;
     }
 }

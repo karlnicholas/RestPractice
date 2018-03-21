@@ -1,16 +1,16 @@
 package employeeproject.item;
 
 public class EmployeeProjectItem {
-    private Long id;
+    private Integer empId;
     private String projectId;
     private String projectName;
     private String techstack;
-    private String empId;
-    public Long getId() {
-        return id;
+    
+    public Integer getEmpId() {
+        return empId;
     }
-    public void setId(Long id) {
-        this.id = id;
+    public void setEmpId(Integer empId) {
+        this.empId = empId;
     }
     public String getProjectId() {
         return projectId;
@@ -29,11 +29,5 @@ public class EmployeeProjectItem {
     }
     public void setTechstack(String techstack) {
         this.techstack = techstack;
-    }
-    public String getEmpId() {
-        return empId;
-    }
-    public void setEmpId(String empId) {
-        this.empId = empId;
     }
 }

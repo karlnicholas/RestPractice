@@ -16,11 +16,11 @@ import employeeaddress.item.EmployeeAddressItem;
 @RestController
 public class EmployeeAddressController {
     @Autowired
-    EmployeeAddressClient employeeAddressClient;
+    private EmployeeAddressClient employeeAddressClient;
     
-    @GetMapping(value="/employee/address/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable("id") Long id) {
-        return employeeAddressClient.getEmployeeAddress(id);
+    @GetMapping(value="/employee/address/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable("empId") Integer empId) {
+        return employeeAddressClient.getEmployeeAddress(empId);
     }
     
     @PostMapping(value="/employee/address/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -33,15 +33,15 @@ public class EmployeeAddressController {
         return employeeAddressClient.putEmployeeAddress(employeeAddressItem);
     }
 
-    @DeleteMapping(value="/employee/address/delete/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressItem> deleteEmployeeAddress(@PathVariable("id") Long id) {
-        return employeeAddressClient.deleteEmployeeAddress(id);
+    @DeleteMapping(value="/employee/address/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EmployeeAddressItem> deleteEmployeeAddress(@PathVariable("empId") Integer empId) {
+        return employeeAddressClient.deleteEmployeeAddress(empId);
     }
     
     @FeignClient(name="EmployeeAddress")
-    interface EmployeeAddressClient {
-        @GetMapping(value="/employee/address/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable("id") Long id);
+    public interface EmployeeAddressClient {
+        @GetMapping(value="/employee/address/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable("empId") Integer empId);
         
         @PostMapping(value="/employee/address/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeAddressItem> postEmployeeAddress(EmployeeAddressItem employeeAddressItem);
@@ -49,6 +49,6 @@ public class EmployeeAddressController {
         @PutMapping(value="/employee/address/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeAddressItem> putEmployeeAddress(EmployeeAddressItem employeeAddressItem);
 
-        @DeleteMapping(value="/employee/address/delete/{id}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeAddressItem> deleteEmployeeAddress(@PathVariable("id") Long id);
+        @DeleteMapping(value="/employee/address/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<EmployeeAddressItem> deleteEmployeeAddress(@PathVariable("empId") Integer empId);
     }}

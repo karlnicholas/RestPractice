@@ -3,18 +3,17 @@ package employeedetail.item;
 import java.math.BigDecimal;
 
 public class EmployeeDetailItem {
-    private Long id;
+    private Integer empId;
     private String name;
     private String role;
     private BigDecimal salary;
     private String roleDescription;
-    private String empId;
 
-    public Long getId() {
-        return id;
+    public Integer getEmpId() {
+        return empId;
     }
-    public void setId(Long id) {
-        this.id = id;
+    public void setEmpId(Integer empId) {
+        this.empId = empId;
     }
     public String getName() {
         return name;
@@ -40,11 +39,4 @@ public class EmployeeDetailItem {
     public void setRoleDescription(String roleDescription) {
         this.roleDescription = roleDescription;
     }
-    public String getEmpId() {
-        return empId;
-    }
-    public void setEmpId(String empId) {
-        this.empId = empId;
-    }
-
 }

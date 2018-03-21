@@ -1,18 +1,13 @@
 package employeeaddress.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import employeeaddress.item.EmployeeAddressItem;
 
 @Entity
-@Table(uniqueConstraints={@UniqueConstraint(columnNames="empId")})
 public class EmployeeAddress {
-    @Id @GeneratedValue
-    private Long id;
+    @Id private Integer empId;
     
     private String address1;
     private String address2;
@@ -20,39 +15,35 @@ public class EmployeeAddress {
     private String address4;
     private String state;
     private String country;
-    private String empId;
 
     public EmployeeAddress() {}
     
     public EmployeeAddress(EmployeeAddressItem employeeAddressItem) {
-        id = employeeAddressItem.getId();
+        empId = employeeAddressItem.getEmpId();
         address1 = employeeAddressItem.getAddress1();
         address2 = employeeAddressItem.getAddress2();
         address3 = employeeAddressItem.getAddress3();
         address4 = employeeAddressItem.getAddress4();
         state = employeeAddressItem.getState();
         country = employeeAddressItem.getCountry();  
-        empId = employeeAddressItem.getEmpId();
     }
     public EmployeeAddressItem asEmployeeAddressItem() {
         EmployeeAddressItem employeeAddressItem = new EmployeeAddressItem();
-        employeeAddressItem.setId(id);
+        employeeAddressItem.setEmpId(empId);
         employeeAddressItem.setAddress1(address1);
         employeeAddressItem.setAddress2(address2);
         employeeAddressItem.setAddress3(address3);
         employeeAddressItem.setAddress4(address4);
         employeeAddressItem.setState(state);
         employeeAddressItem.setCountry(country);
-        employeeAddressItem.setEmpId(empId);
         return employeeAddressItem;
     }
-    
-    public Long getId() {
-        return id;
+    public Integer getEmpId() {
+        return empId;
     }
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public void setEmpId(Integer empId) {
+        this.empId = empId;
+    }   
     public String getAddress1() {
         return address1;
     }
@@ -89,10 +80,4 @@ public class EmployeeAddress {
     public void setCountry(String country) {
         this.country = country;
     }
-    public String getEmpId() {
-        return empId;
-    }
-    public void setEmpId(String empId) {
-        this.empId = empId;
-    }   
 }

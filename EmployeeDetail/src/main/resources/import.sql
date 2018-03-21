@@ -1,1 +1,1 @@
-insert into employee_detail values (1, 'Karl', '767691', 'Sr. Software Developer', 'Analyze, Design, Code, and Deploy Enterprise Applications', 100000.00);
+insert into employee_detail(emp_id, name, role, role_description, salary) values (767691, 'Karl', 'Sr. Software Developer', 'Analyze, Design, Code, and Deploy Enterprise Applications', 100000.00);
