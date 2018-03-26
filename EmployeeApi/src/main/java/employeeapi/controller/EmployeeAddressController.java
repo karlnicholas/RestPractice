@@ -1,6 +1,8 @@
 package employeeapi.controller;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
@@ -17,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import employeeaddress.item.EmployeeAddressItem;
 
 @RestController
-@RequestMapping("/employee/address")
 @ExposesResourceFor(EmployeeAddressItem.class)
+@RequestMapping("/employee/address")
 public class EmployeeAddressController {
     private final EmployeeAddressClient employeeAddressClient;
     private final EntityLinks entityLinks;
@@ -28,7 +30,7 @@ public class EmployeeAddressController {
         EntityLinks entityLinks
     ) {
         this.employeeAddressClient = employeeAddressClient;
-        this.entityLinks = entityLinks;
+        this.entityLinks = entityLinks; 
     }
 
     @GetMapping(value="/", produces=MediaType.APPLICATION_JSON_VALUE)
@@ -40,7 +42,15 @@ public class EmployeeAddressController {
     public ResponseEntity<Resource<EmployeeAddressItem>> getEmployeeAddress(@PathVariable("empId") Integer empId) {
         ResponseEntity<EmployeeAddressItem> employeeAddressItemResponse = employeeAddressClient.getEmployeeAddress(empId);
         Resource<EmployeeAddressItem> resource = new Resource<>(employeeAddressItemResponse.getBody());
-        resource.add(entityLinks.linkToSingleResource(EmployeeAddressItem.class, empId));
+
+//        resource.add(linkTo(EmployeeAddressController.class).slash(empId).slash("books").withRel("vaquar"));
+
+        entityLinks.linkToSingleResource(EmployeeAddressItem.class, empId);
+        // or by pointing directly to a controller method
+        resource.add(linkTo(methodOn(EmployeeAddressController.class).getEmployeeAddress(empId)).withSelfRel());        
+        resource.add(linkTo(methodOn(EmployeeAddressController.class).deleteEmployeeAddress(empId)).withRel("delete"));        
+        resource.add(linkTo(methodOn(EmployeeAddressController.class).putEmployeeAddress(resource.getContent())).withRel("update"));
+        resource.add(linkTo(methodOn(EmployeeAddressController.class).postEmployeeAddress(resource.getContent())).withRel("create"));        
         return ResponseEntity.ok(resource);
     }
     
