@@ -42,11 +42,8 @@ public class EmployeeAddressController {
     public ResponseEntity<Resource<EmployeeAddressItem>> getEmployeeAddress(@PathVariable("empId") Integer empId) {
         ResponseEntity<EmployeeAddressItem> employeeAddressItemResponse = employeeAddressClient.getEmployeeAddress(empId);
         Resource<EmployeeAddressItem> resource = new Resource<>(employeeAddressItemResponse.getBody());
-
-//        resource.add(linkTo(EmployeeAddressController.class).slash(empId).slash("books").withRel("vaquar"));
-
         entityLinks.linkToSingleResource(EmployeeAddressItem.class, empId);
-        // or by pointing directly to a controller method
+        // Add all the CRUD methods for this employee in hypermedia links
         resource.add(linkTo(methodOn(EmployeeAddressController.class).getEmployeeAddress(empId)).withSelfRel());        
         resource.add(linkTo(methodOn(EmployeeAddressController.class).deleteEmployeeAddress(empId)).withRel("delete"));        
         resource.add(linkTo(methodOn(EmployeeAddressController.class).putEmployeeAddress(resource.getContent())).withRel("update"));
@@ -69,6 +66,9 @@ public class EmployeeAddressController {
         return employeeAddressClient.deleteEmployeeAddress(empId);
     }
     
+    // use a feign client to access the EmployeeAddress server so that it "loadbalances".
+    // It makes log entries about contacting the EmployeeAddress server, 
+    // but the load balancing doesn't seem to work well at this point.
     @FeignClient(name="EmployeeAddress")
     public interface EmployeeAddressClient {
         @GetMapping(value="/employee/address/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
