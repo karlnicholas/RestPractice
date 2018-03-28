@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: EmployeeApi
+server:
+  port: 8080
+eureka:
+  client:
+    enabled: false

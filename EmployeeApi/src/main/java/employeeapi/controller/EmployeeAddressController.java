@@ -44,6 +44,7 @@ public class EmployeeAddressController {
         Resource<EmployeeAddressItem> resource = new Resource<>(employeeAddressItemResponse.getBody());
         entityLinks.linkToSingleResource(EmployeeAddressItem.class, empId);
         // Add all the CRUD methods for this employee in hypermedia links
+        // definitely need some way to generalize this
         resource.add(linkTo(methodOn(EmployeeAddressController.class).getEmployeeAddress(empId)).withSelfRel());        
         resource.add(linkTo(methodOn(EmployeeAddressController.class).deleteEmployeeAddress(empId)).withRel("delete"));        
         resource.add(linkTo(methodOn(EmployeeAddressController.class).putEmployeeAddress(resource.getContent())).withRel("update"));
