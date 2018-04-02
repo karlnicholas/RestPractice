@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import employeeaddress.item.EmployeeAddressItem;
 import employeeaddress.model.EmployeeAddress;
 import employeeaddress.service.EmployeeAddressRepository;
-import employeeaddress.item.EmployeeAddressItem;
 
 @RestController
 @RequestMapping("/employee/address")

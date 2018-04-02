@@ -1,8 +1,8 @@
-package employeeaddress.item;
+package employeeapi.controller;
 
 import org.springframework.hateoas.ResourceSupport;
 
-public class EmployeeAddressItem extends ResourceSupport {
+public class EmployeeAddressResource extends ResourceSupport {
     private Integer empId;
     private String address1;
     private String address2;
@@ -53,4 +53,5 @@ public class EmployeeAddressItem extends ResourceSupport {
     public void setCountry(String country) {
         this.country = country;
     }
+
 }
