@@ -1,4 +1,4 @@
-package employeeapi.controller;
+package employeeapi.resource;
 
 import org.springframework.hateoas.ResourceSupport;
 

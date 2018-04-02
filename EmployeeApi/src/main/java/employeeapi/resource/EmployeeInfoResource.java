@@ -1,12 +1,14 @@
-package employeeinfo.item;
+package employeeapi.resource;
 
 import java.math.BigDecimal;
+
+import org.springframework.hateoas.ResourceSupport;
 
 import employeeaddress.item.EmployeeAddressItem;
 import employeedetail.item.EmployeeDetailItem;
 import employeeproject.item.EmployeeProjectItem;
 
-public class EmployeeInfoItem {
+public class EmployeeInfoResource extends ResourceSupport {
     private final Integer empId;
     private final String address1;
     private final String address2;
@@ -22,7 +24,7 @@ public class EmployeeInfoItem {
     private final String projectName;
     private final String techstack;
 
-    public EmployeeInfoItem(
+    public EmployeeInfoResource(
             EmployeeAddressItem employeeAddressItem, 
             EmployeeDetailItem employeeDetailItem, 
             EmployeeProjectItem employeeProjectItem 

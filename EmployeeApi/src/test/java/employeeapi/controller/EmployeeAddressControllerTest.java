@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import employeeaddress.item.EmployeeAddressItem;
 import employeeapi.controller.EmployeeAddressController.EmployeeAddressClient;
+import employeeapi.resource.EmployeeAddressResource;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

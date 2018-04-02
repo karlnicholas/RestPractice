@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import employeeaddress.item.EmployeeAddressItem;
+import employeeapi.resource.EmployeeAddressResource;
+import employeeapi.resource.EmployeeAddressResourceAssembler;
 
 @RestController
-@ExposesResourceFor(EmployeeAddressResource.class)
 @RequestMapping("/employee/address")
 public class EmployeeAddressController {
     private final EmployeeAddressClient employeeAddressClient;
@@ -32,7 +33,7 @@ public class EmployeeAddressController {
 
     @GetMapping(value="/", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getApi() {
-        return ResponseEntity.ok("Nothing Yet");
+        return ResponseEntity.ok("List of Employee addresses not supported");
     }
     
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)

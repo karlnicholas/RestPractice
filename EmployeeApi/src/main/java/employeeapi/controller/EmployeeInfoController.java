@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityLinks;
-import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +16,12 @@ import employeeaddress.item.EmployeeAddressItem;
 import employeeapi.controller.EmployeeAddressController.EmployeeAddressClient;
 import employeeapi.controller.EmployeeDetailController.EmployeeDetailClient;
 import employeeapi.controller.EmployeeProjectController.EmployeeProjectClient;
+import employeeapi.resource.EmployeeInfoResource;
 import employeedetail.item.EmployeeDetailItem;
-import employeeinfo.item.EmployeeInfoItem;
 import employeeproject.item.EmployeeProjectItem;
 
 @RestController
 @RequestMapping("/employee/info")
-@ExposesResourceFor(EmployeeInfoItem.class)
 public class EmployeeInfoController {
     private static final Logger logger = LoggerFactory.getLogger(EmployeeInfoController.class);
     @Autowired
@@ -37,7 +34,7 @@ public class EmployeeInfoController {
     private EntityLinks entityLinks;
     
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Resource<EmployeeInfoItem>> getEmployeeInfo(@PathVariable("empId") Integer empId) {
+    public ResponseEntity<EmployeeInfoResource> getEmployeeInfo(@PathVariable("empId") Integer empId) {
         logger.debug("EmployeeAddressController::getEmployeeAddress empId = " + empId);
         //TODO: Make these calls asynchronously
         ResponseEntity<EmployeeAddressItem> employeeAddressResponse = employeeAddressClient.getEmployeeAddress(empId);
@@ -52,12 +49,10 @@ public class EmployeeInfoController {
         if ( employeeProjectResponse.getStatusCode() != HttpStatus.OK) {
             throw new IllegalArgumentException("Error retrieving EmployeeProject: HttpStatus = " + employeeProjectResponse.getStatusCodeValue());
         }
-        Resource<EmployeeInfoItem> resource = new Resource<>(
-            new EmployeeInfoItem(
-                employeeAddressResponse.getBody(), 
-                employeeDetailResponse.getBody(), 
-                employeeProjectResponse.getBody() 
-            )
+        EmployeeInfoResource resource = new EmployeeInfoResource(
+            employeeAddressResponse.getBody(), 
+            employeeDetailResponse.getBody(), 
+            employeeProjectResponse.getBody() 
         );
         resource.add(this.entityLinks.linkToSingleResource(EmployeeAddressItem.class, empId));
         return ResponseEntity.ok(resource);

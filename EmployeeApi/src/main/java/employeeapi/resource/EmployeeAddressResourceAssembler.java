@@ -1,9 +1,10 @@
-package employeeapi.controller;
+package employeeapi.resource;
 
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
 import employeeaddress.item.EmployeeAddressItem;
+import employeeapi.controller.EmployeeAddressController;
 
 /**
  * @author Karl Nicholas
