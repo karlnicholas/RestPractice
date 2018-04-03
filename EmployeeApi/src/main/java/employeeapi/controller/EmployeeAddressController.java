@@ -1,11 +1,7 @@
 package employeeapi.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,14 +19,11 @@ import employeeapi.resource.EmployeeAddressResourceAssembler;
 @RestController
 @RequestMapping("/employee/address")
 public class EmployeeAddressController {
-    private final EmployeeAddressClient employeeAddressClient;
+    @Autowired
+    private EmployeeAddressClient employeeAddressClient;
+    @Autowired
+    private EmployeeAddressResourceAssembler assembler;
     
-    public EmployeeAddressController(
-        EmployeeAddressClient employeeAddressClient
-    ) {
-        this.employeeAddressClient = employeeAddressClient;
-    }
-
     @GetMapping(value="/", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getApi() {
         return ResponseEntity.ok("List of Employee addresses not supported");
@@ -39,18 +32,7 @@ public class EmployeeAddressController {
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeAddressResource> getEmployeeAddress(@PathVariable("empId") Integer empId) {
         ResponseEntity<EmployeeAddressItem> employeeAddressItemResponse = employeeAddressClient.getEmployeeAddress(empId);
-        EmployeeAddressResourceAssembler assembler = new EmployeeAddressResourceAssembler();
-        EmployeeAddressResource resource = assembler.toResource(employeeAddressItemResponse.getBody());
-        
-//        Resource<EmployeeAddressResource> resource = new Resource<>(employeeAddressItemResponse.getBody());
-//        entityLinks.linkToSingleResource(EmployeeAddressItem.class, empId);
-        // Add all the CRUD methods for this employee in hypermedia links
-        // definitely need some way to generalize this
-//        resource.add(linkTo(methodOn(EmployeeAddressController.class).getEmployeeAddress(empId)).withSelfRel());        
-        resource.add(linkTo(methodOn(EmployeeAddressController.class).deleteEmployeeAddress(empId)).withRel("delete"));        
-        resource.add(linkTo(methodOn(EmployeeAddressController.class).putEmployeeAddress(employeeAddressItemResponse.getBody())).withRel("update"));
-        resource.add(linkTo(methodOn(EmployeeAddressController.class).postEmployeeAddress(employeeAddressItemResponse.getBody())).withRel("create"));        
-        return ResponseEntity.ok(resource);
+        return ResponseEntity.ok(assembler.toResource(employeeAddressItemResponse.getBody()));
     }
     
     @PostMapping(value="/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)

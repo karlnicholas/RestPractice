@@ -3,7 +3,6 @@ package employeeapi.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.EntityLinks;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,7 @@ import employeeapi.controller.EmployeeAddressController.EmployeeAddressClient;
 import employeeapi.controller.EmployeeDetailController.EmployeeDetailClient;
 import employeeapi.controller.EmployeeProjectController.EmployeeProjectClient;
 import employeeapi.resource.EmployeeInfoResource;
+import employeeapi.resource.EmployeeInfoResourceAssembler;
 import employeedetail.item.EmployeeDetailItem;
 import employeeproject.item.EmployeeProjectItem;
 
@@ -31,7 +31,7 @@ public class EmployeeInfoController {
     @Autowired
     private EmployeeProjectClient employeeProjectClient;
     @Autowired
-    private EntityLinks entityLinks;
+    private EmployeeInfoResourceAssembler assembler;
     
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeInfoResource> getEmployeeInfo(@PathVariable("empId") Integer empId) {
@@ -54,7 +54,8 @@ public class EmployeeInfoController {
             employeeDetailResponse.getBody(), 
             employeeProjectResponse.getBody() 
         );
-        resource.add(this.entityLinks.linkToSingleResource(EmployeeAddressItem.class, empId));
-        return ResponseEntity.ok(resource);
+        EmployeeInfoResource resourceWithLinks = assembler.toResource(resource);
+//        resource.add(this.entityLinks.linkToSingleResource(EmployeeAddressItem.class, empId));
+        return ResponseEntity.ok(resourceWithLinks);
     }
 }

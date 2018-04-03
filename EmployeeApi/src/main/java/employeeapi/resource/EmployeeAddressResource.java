@@ -2,6 +2,8 @@ package employeeapi.resource;
 
 import org.springframework.hateoas.ResourceSupport;
 
+import employeeaddress.item.EmployeeAddressItem;
+
 public class EmployeeAddressResource extends ResourceSupport {
     private Integer empId;
     private String address1;
@@ -10,6 +12,16 @@ public class EmployeeAddressResource extends ResourceSupport {
     private String address4;
     private String state;
     private String country;
+    
+    public void fromEmployeeAddressItem(EmployeeAddressItem item) {
+        this.empId = item.getEmpId();
+        this.address1 = item.getAddress1();
+        this.address2 = item.getAddress2();
+        this.address3 = item.getAddress3();
+        this.address4 = item.getAddress4();
+        this.state = item.getState();
+        this.country = item.getCountry();
+    }
 
     public Integer getEmpId() {
         return empId;
