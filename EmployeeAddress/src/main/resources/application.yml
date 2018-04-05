@@ -2,7 +2,10 @@ spring:
   application:
     name: EmployeeAddress
 server:
-  port: 0
+  port: ${PORT:0}
+logging:
+  level:
+    com.netflix.discovery: 'OFF'
 eureka:
   client:
     serviceUrl:
@@ -11,3 +14,6 @@ eureka:
     preferIpAddress: true
     lease-renewal-interval-in-seconds: 1
     lease-expiration-duration-in-seconds: 2
+    metadataMap:
+      instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
