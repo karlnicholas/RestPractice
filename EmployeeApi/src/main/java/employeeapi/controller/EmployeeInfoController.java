@@ -1,5 +1,8 @@
 package employeeapi.controller;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import employeeaddress.item.EmployeeAddressItem;
-import employeeapi.controller.EmployeeAddressController.EmployeeAddressClient;
-import employeeapi.controller.EmployeeDetailController.EmployeeDetailClient;
-import employeeapi.controller.EmployeeProjectController.EmployeeProjectClient;
 import employeeapi.resource.EmployeeInfoResource;
 import employeeapi.resource.EmployeeInfoResourceAssembler;
+import employeeapi.service.EmployeeInfoService;
 import employeedetail.item.EmployeeDetailItem;
 import employeeproject.item.EmployeeProjectItem;
 
@@ -25,11 +26,7 @@ import employeeproject.item.EmployeeProjectItem;
 public class EmployeeInfoController {
     private static final Logger logger = LoggerFactory.getLogger(EmployeeInfoController.class);
     @Autowired
-    private EmployeeAddressClient employeeAddressClient;
-    @Autowired
-    private EmployeeDetailClient employeeDetailClient;
-    @Autowired
-    private EmployeeProjectClient employeeProjectClient;
+    private EmployeeInfoService employeeInfoService;
     @Autowired
     private EmployeeInfoResourceAssembler assembler;
     
@@ -37,25 +34,24 @@ public class EmployeeInfoController {
     public ResponseEntity<EmployeeInfoResource> getEmployeeInfo(@PathVariable("empId") Integer empId) {
         logger.debug("EmployeeAddressController::getEmployeeAddress empId = " + empId);
         //TODO: Make these calls asynchronously
-        ResponseEntity<EmployeeAddressItem> employeeAddressResponse = employeeAddressClient.getEmployeeAddress(empId);
-        if ( employeeAddressResponse.getStatusCode() != HttpStatus.OK) {
-            throw new IllegalArgumentException("Error retrieving EmployeeAddress: HttpStatus = " + employeeAddressResponse.getStatusCodeValue());
+        try {
+            CompletableFuture<EmployeeAddressItem> employeeAddressFuture = employeeInfoService.getEmployeeAddress(empId);
+            CompletableFuture<EmployeeDetailItem> employeeDetailFuture = employeeInfoService.getEmployeeDetail(empId);
+            CompletableFuture<EmployeeProjectItem> employeeProjectFuture = employeeInfoService.getEmployeeProject(empId);
+    
+
+            EmployeeInfoResource resource = new EmployeeInfoResource(
+                    employeeAddressFuture.get(), 
+                    employeeDetailFuture.get(), 
+                    employeeProjectFuture.get() 
+            );
+            EmployeeInfoResource resourceWithLinks = assembler.toResource(resource);
+    //        resource.add(this.entityLinks.linkToSingleResource(EmployeeAddressItem.class, empId));
+            return ResponseEntity.ok(resourceWithLinks);
+        } catch (InterruptedException | ExecutionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).build();
         }
-        ResponseEntity<EmployeeDetailItem> employeeDetailResponse = employeeDetailClient.getEmployeeDetail(empId); 
-        if ( employeeDetailResponse.getStatusCode() != HttpStatus.OK) {
-            throw new IllegalArgumentException("Error retrieving EmployeeDetail: HttpStatus = " + employeeDetailResponse.getStatusCodeValue());
-        }
-        ResponseEntity<EmployeeProjectItem> employeeProjectResponse = employeeProjectClient.getEmployeeProject(empId); 
-        if ( employeeProjectResponse.getStatusCode() != HttpStatus.OK) {
-            throw new IllegalArgumentException("Error retrieving EmployeeProject: HttpStatus = " + employeeProjectResponse.getStatusCodeValue());
-        }
-        EmployeeInfoResource resource = new EmployeeInfoResource(
-            employeeAddressResponse.getBody(), 
-            employeeDetailResponse.getBody(), 
-            employeeProjectResponse.getBody() 
-        );
-        EmployeeInfoResource resourceWithLinks = assembler.toResource(resource);
-//        resource.add(this.entityLinks.linkToSingleResource(EmployeeAddressItem.class, empId));
-        return ResponseEntity.ok(resourceWithLinks);
     }
 }

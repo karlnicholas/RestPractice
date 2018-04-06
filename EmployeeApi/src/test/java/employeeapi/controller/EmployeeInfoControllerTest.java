@@ -20,6 +20,7 @@ import employeeapi.controller.EmployeeAddressController.EmployeeAddressClient;
 import employeeapi.controller.EmployeeDetailController.EmployeeDetailClient;
 import employeeapi.controller.EmployeeProjectController.EmployeeProjectClient;
 import employeeapi.resource.EmployeeInfoResourceAssembler;
+import employeeapi.service.EmployeeInfoService;
 import employeedetail.item.EmployeeDetailItem;
 import employeeproject.item.EmployeeProjectItem;
 
@@ -33,7 +34,7 @@ import java.math.BigDecimal;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(EmployeeInfoController.class)
-@Import(EmployeeInfoResourceAssembler.class)
+@Import({EmployeeInfoResourceAssembler.class, EmployeeInfoService.class})
 public class EmployeeInfoControllerTest {
 
     @Autowired

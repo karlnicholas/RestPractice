@@ -3,6 +3,9 @@ spring:
     name: EmployeeApi
 server:
   port: 8080
+logging:
+  level:
+    employeeapi: 'OFF'
 eureka:
   client:
     serviceUrl:
