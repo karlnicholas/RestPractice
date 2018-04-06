@@ -33,24 +33,25 @@ public class EmployeeInfoController {
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeInfoResource> getEmployeeInfo(@PathVariable("empId") Integer empId) {
         logger.debug("EmployeeAddressController::getEmployeeAddress empId = " + empId);
-        //TODO: Make these calls asynchronously
         try {
-            CompletableFuture<EmployeeAddressItem> employeeAddressFuture = employeeInfoService.getEmployeeAddress(empId);
-            CompletableFuture<EmployeeDetailItem> employeeDetailFuture = employeeInfoService.getEmployeeDetail(empId);
-            CompletableFuture<EmployeeProjectItem> employeeProjectFuture = employeeInfoService.getEmployeeProject(empId);
-    
-
+            CompletableFuture<EmployeeAddressItem> employeeAddressFuture 
+                = employeeInfoService.getEmployeeAddress(empId);
+            CompletableFuture<EmployeeDetailItem> employeeDetailFuture 
+                = employeeInfoService.getEmployeeDetail(empId);
+            CompletableFuture<EmployeeProjectItem> employeeProjectFuture 
+                = employeeInfoService.getEmployeeProject(empId);
+            
             EmployeeInfoResource resource = new EmployeeInfoResource(
-                    employeeAddressFuture.get(), 
-                    employeeDetailFuture.get(), 
-                    employeeProjectFuture.get() 
+                employeeAddressFuture.get(), 
+                employeeDetailFuture.get(), 
+                employeeProjectFuture.get() 
             );
+            
             EmployeeInfoResource resourceWithLinks = assembler.toResource(resource);
-    //        resource.add(this.entityLinks.linkToSingleResource(EmployeeAddressItem.class, empId));
             return ResponseEntity.ok(resourceWithLinks);
+            
         } catch (InterruptedException | ExecutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error( e.getMessage() );
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).build();
         }
     }
