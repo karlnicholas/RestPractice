@@ -2,13 +2,15 @@ package employeeproject.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 import employeeproject.item.EmployeeProjectItem;
 
 @Entity
+@IdClass(EmployeeProjectId.class)
 public class EmployeeProject {
     @Id private Integer empId;    
-    private String projectId;
+    @Id private String projectId;
     private String projectName;
     private String techstack;
 

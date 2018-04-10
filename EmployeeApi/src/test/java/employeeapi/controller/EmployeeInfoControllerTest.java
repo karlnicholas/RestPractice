@@ -30,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RunWith(SpringRunner.class)
@@ -51,6 +53,7 @@ public class EmployeeInfoControllerTest {
     private EmployeeAddressItem employeeAddressItem;
     private EmployeeDetailItem employeeDetailItem;
     private EmployeeProjectItem employeeProjectItem;
+    private List<EmployeeProjectItem> employeeProjectItems;
 
     @Before
     public void setup() {
@@ -62,8 +65,8 @@ public class EmployeeInfoControllerTest {
         employeeAddressItem.setAddress4("Address 4");
         employeeAddressItem.setState("AZ");
         employeeAddressItem.setCountry("US");
-        when(employeeAddressClient.getEmployeeAddress(767691)).thenReturn(ResponseEntity.ok(employeeAddressItem));
-        when(employeeAddressClient.deleteEmployeeAddress(767691)).thenReturn(ResponseEntity.ok(employeeAddressItem));
+        when(employeeAddressClient.getEmployeeAddress(1)).thenReturn(ResponseEntity.ok(employeeAddressItem));
+        when(employeeAddressClient.deleteEmployeeAddress(1)).thenReturn(ResponseEntity.ok(employeeAddressItem));
         when(employeeAddressClient.postEmployeeAddress(employeeAddressItem)).thenReturn(ResponseEntity.ok(employeeAddressItem));
         when(employeeAddressClient.putEmployeeAddress(employeeAddressItem)).thenReturn(ResponseEntity.ok(employeeAddressItem));
         //
@@ -73,18 +76,20 @@ public class EmployeeInfoControllerTest {
         employeeDetailItem.setRole("4");
         employeeDetailItem.setRoleDescription("Technical Analyst");
         employeeDetailItem.setSalary(new BigDecimal("100000.00"));
-        when(employeeDetailClient.getEmployeeDetail(767691)).thenReturn(ResponseEntity.ok(employeeDetailItem));
-        when(employeeDetailClient.deleteEmployeeDetail(767691)).thenReturn(ResponseEntity.ok(employeeDetailItem));
+        when(employeeDetailClient.getEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
+        when(employeeDetailClient.deleteEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         when(employeeDetailClient.postEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         when(employeeDetailClient.putEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         //
+        employeeProjectItems = new ArrayList<>();
         employeeProjectItem = new EmployeeProjectItem();
-        employeeProjectItem.setEmpId(767691);
-        employeeProjectItem.setProjectId("ALCON");
+        employeeProjectItem.setEmpId(1);
+        employeeProjectItem.setProjectId("1004");
         employeeProjectItem.setProjectName("Nemo");
         employeeProjectItem.setTechstack("Java EE");
-        when(employeeProjectClient.getEmployeeProject(767691)).thenReturn(ResponseEntity.ok(employeeProjectItem));
-        when(employeeProjectClient.deleteEmployeeProject(767691)).thenReturn(ResponseEntity.ok(employeeProjectItem));
+        employeeProjectItems.add(employeeProjectItem);
+        when(employeeProjectClient.getEmployeeProjects(1)).thenReturn(ResponseEntity.ok(employeeProjectItems));
+        when(employeeProjectClient.deleteEmployeeProject(1, "1004")).thenReturn(ResponseEntity.ok(employeeProjectItem));
         when(employeeProjectClient.postEmployeeProject(employeeProjectItem)).thenReturn(ResponseEntity.ok(employeeProjectItem));
         when(employeeProjectClient.putEmployeeProject(employeeProjectItem)).thenReturn(ResponseEntity.ok(employeeProjectItem));
         

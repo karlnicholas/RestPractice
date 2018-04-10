@@ -1,6 +1,6 @@
 package employeeapi.resource;
 
-import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
+import org.springframework.hateoas.mvc.IdentifiableResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
 import employeeapi.controller.EmployeeInfoController;
@@ -10,7 +10,7 @@ import employeeapi.controller.EmployeeInfoController;
  */
 @Component
 public class EmployeeInfoResourceAssembler
-        extends ResourceAssemblerSupport<EmployeeInfoResource, EmployeeInfoResource> {
+        extends IdentifiableResourceAssemblerSupport<EmployeeInfoResource, EmployeeInfoResource> {
 
     public EmployeeInfoResourceAssembler() {
         super(EmployeeInfoController.class, EmployeeInfoResource.class);

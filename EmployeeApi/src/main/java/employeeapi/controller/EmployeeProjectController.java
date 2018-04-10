@@ -1,5 +1,7 @@
 package employeeapi.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -19,8 +21,8 @@ public class EmployeeProjectController {
     private EmployeeProjectClient employeeProjectClient;
     
     @GetMapping(value="/employee/project/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeProjectItem> getEmployeeProject(@PathVariable("empId") Integer empId) {
-        return employeeProjectClient.getEmployeeProject(empId);
+    public ResponseEntity<List<EmployeeProjectItem>> getEmployeeProjects(@PathVariable("empId") Integer empId) {
+        return employeeProjectClient.getEmployeeProjects(empId);
     }
     
     @PostMapping(value="/employee/project/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -33,14 +35,14 @@ public class EmployeeProjectController {
         return employeeProjectClient.putEmployeeProject(employeeProjectItem);
     }
 
-    @DeleteMapping(value="/employee/project/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeProjectItem> deleteEmployeeProject(@PathVariable("empId") Integer empId) {
-        return employeeProjectClient.deleteEmployeeProject(empId);
+    @DeleteMapping(value="/employee/project/delete/{empId},{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EmployeeProjectItem> deleteEmployeeProject(@PathVariable("empId") Integer empId, @PathVariable("empId") String projectId) {
+        return employeeProjectClient.deleteEmployeeProject(empId, projectId);
     }
     @FeignClient(name="EmployeeProject")
     public interface EmployeeProjectClient {
         @GetMapping(value="/employee/project/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeProjectItem> getEmployeeProject(@PathVariable("empId") Integer empId);
+        public ResponseEntity<List<EmployeeProjectItem>> getEmployeeProjects(@PathVariable("empId") Integer empId);
         
         @PostMapping(value="/employee/project/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeProjectItem> postEmployeeProject(EmployeeProjectItem employeeProjectItem);
@@ -48,7 +50,7 @@ public class EmployeeProjectController {
         @PutMapping(value="/employee/project/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeProjectItem> putEmployeeProject(EmployeeProjectItem employeeProjectItem);
 
-        @DeleteMapping(value="/employee/project/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeProjectItem> deleteEmployeeProject(@PathVariable("empId") Integer id);
+        @DeleteMapping(value="/employee/project/delete/{empId},{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<EmployeeProjectItem> deleteEmployeeProject(@PathVariable("empId") Integer empId, @PathVariable("empId") String projectId);
     }    
 }

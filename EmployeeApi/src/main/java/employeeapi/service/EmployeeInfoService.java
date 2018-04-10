@@ -1,5 +1,6 @@
 package employeeapi.service;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
@@ -48,9 +49,9 @@ public class EmployeeInfoService {
     }
 
     @Async
-    public CompletableFuture<EmployeeProjectItem> getEmployeeProject(Integer empId) throws InterruptedException{
+    public CompletableFuture<List<EmployeeProjectItem>> getEmployeeProject(Integer empId) throws InterruptedException{
         logger.debug("Async getting employeeProject");
-        ResponseEntity<EmployeeProjectItem> employeeProjectResponse = employeeProjectClient.getEmployeeProject(empId);
+        ResponseEntity<List<EmployeeProjectItem>> employeeProjectResponse = employeeProjectClient.getEmployeeProjects(empId);
         if ( employeeProjectResponse.getStatusCode() != HttpStatus.OK) {
             throw new IllegalArgumentException("Error retrieving EmployeeProject: HttpStatus = " + employeeProjectResponse.getStatusCodeValue());
         }

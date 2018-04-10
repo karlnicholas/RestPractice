@@ -24,7 +24,7 @@ public class EmployeeAddressController {
     @Autowired
     private EmployeeAddressResourceAssembler assembler;
     
-    @GetMapping(value="/", produces=MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getApi() {
         return ResponseEntity.ok("List of Employee addresses not supported");
     }

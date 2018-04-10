@@ -1,11 +1,14 @@
 package employeeapi.resource;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.hateoas.ResourceSupport;
 
 import employeeaddress.item.EmployeeAddressItem;
 import employeedetail.item.EmployeeDetailItem;
+import employeeproject.item.EmployeeProject;
 import employeeproject.item.EmployeeProjectItem;
 
 public class EmployeeInfoResource extends ResourceSupport {
@@ -20,18 +23,15 @@ public class EmployeeInfoResource extends ResourceSupport {
     private String role;
     private BigDecimal salary;
     private String roleDescription;
-    private String projectId;
-    private String projectName;
-    private String techstack;
+    private List<EmployeeProject> projects;
 
     public EmployeeInfoResource() {}
     public EmployeeInfoResource(
             EmployeeAddressItem employeeAddressItem, 
             EmployeeDetailItem employeeDetailItem, 
-            EmployeeProjectItem employeeProjectItem 
+            List<EmployeeProjectItem> employeeProjectItems 
     ) {
-        if ( !employeeAddressItem.getEmpId().equals(employeeDetailItem.getEmpId()) 
-            || !employeeDetailItem.getEmpId().equals(employeeProjectItem.getEmpId())) {
+        if ( !employeeAddressItem.getEmpId().equals(employeeDetailItem.getEmpId()) ) {
             throw new IllegalArgumentException("Invalid EmpIds");
         }
             
@@ -46,9 +46,15 @@ public class EmployeeInfoResource extends ResourceSupport {
         role = employeeDetailItem.getRole();
         salary = employeeDetailItem.getSalary();
         roleDescription = employeeDetailItem.getRoleDescription();
-        projectId = employeeProjectItem.getProjectId();
-        projectName = employeeProjectItem.getProjectName();
-        techstack = employeeProjectItem.getTechstack();
+        
+        projects = new ArrayList<>();
+        for( EmployeeProjectItem employeeProjectItem: employeeProjectItems ) {
+            projects.add(  new EmployeeProject(
+                employeeProjectItem.getProjectId(), 
+                employeeProjectItem.getProjectName(), 
+                employeeProjectItem.getTechstack()
+            ));
+        }
     }
     public void fromEmployeeInfoResource(EmployeeInfoResource resource) {
         empId = resource.getEmpId();
@@ -62,9 +68,7 @@ public class EmployeeInfoResource extends ResourceSupport {
         role = resource.getRole();
         salary = resource.getSalary();
         roleDescription = resource.getRoleDescription();
-        projectId = resource.getProjectId();
-        projectName = resource.getProjectName();
-        techstack = resource.getTechstack();
+        projects = resource.getProjects();
     }
     public Integer getEmpId() {
         return empId;
@@ -132,22 +136,10 @@ public class EmployeeInfoResource extends ResourceSupport {
     public void setRoleDescription(String roleDescription) {
         this.roleDescription = roleDescription;
     }
-    public String getProjectId() {
-        return projectId;
+    public List<EmployeeProject> getProjects() {
+        return projects;
     }
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-    public String getProjectName() {
-        return projectName;
-    }
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-    public String getTechstack() {
-        return techstack;
-    }
-    public void setTechstack(String techstack) {
-        this.techstack = techstack;
+    public void setProjects(List<EmployeeProject> projects) {
+        this.projects = projects;
     }
 }

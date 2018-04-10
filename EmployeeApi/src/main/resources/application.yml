@@ -5,6 +5,7 @@ server:
   port: 8080
 logging:
   level:
+    com.netflix.discovery: 'OFF'
     employeeapi: 'OFF'
 eureka:
   client:
