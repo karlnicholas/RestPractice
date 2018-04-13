@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,10 @@ import employeeapi.controller.EmployeeAddressController.EmployeeAddressClient;
 import employeeapi.controller.EmployeeDetailController.EmployeeDetailClient;
 import employeeapi.controller.EmployeeProjectController.EmployeeProjectClient;
 import employeeapi.resource.EmployeeInfoResourceAssembler;
+import employeeapi.resource.SparseEmployeeDetailResourceAssembler;
 import employeeapi.service.EmployeeInfoService;
 import employeedetail.item.EmployeeDetailItem;
+import employeedetail.item.SparseEmployeeDetailItem;
 import employeeproject.item.EmployeeProjectItem;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,7 +39,11 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(EmployeeInfoController.class)
-@Import({EmployeeInfoResourceAssembler.class, EmployeeInfoService.class})
+@Import({
+    EmployeeInfoResourceAssembler.class, 
+    EmployeeInfoService.class, 
+    SparseEmployeeDetailResourceAssembler.class, 
+})
 public class EmployeeInfoControllerTest {
 
     @Autowired
@@ -52,13 +59,15 @@ public class EmployeeInfoControllerTest {
     
     private EmployeeAddressItem employeeAddressItem;
     private EmployeeDetailItem employeeDetailItem;
+    private SparseEmployeeDetailItem sparseEmployeeDetailItem;
+    private List<SparseEmployeeDetailItem> sparseEmployeeDetailItems;
     private EmployeeProjectItem employeeProjectItem;
     private List<EmployeeProjectItem> employeeProjectItems;
 
     @Before
     public void setup() {
         employeeAddressItem = new EmployeeAddressItem();
-        employeeAddressItem.setEmpId(767691);
+        employeeAddressItem.setEmpId(1);
         employeeAddressItem.setAddress1("Address 1");
         employeeAddressItem.setAddress2("Address 2");
         employeeAddressItem.setAddress3("Address 3");
@@ -71,15 +80,19 @@ public class EmployeeInfoControllerTest {
         when(employeeAddressClient.putEmployeeAddress(employeeAddressItem)).thenReturn(ResponseEntity.ok(employeeAddressItem));
         //
         employeeDetailItem = new EmployeeDetailItem();
-        employeeDetailItem.setEmpId(767691);
+        employeeDetailItem.setEmpId(1);
         employeeDetailItem.setName("Karl Nicholas");
         employeeDetailItem.setRole("4");
         employeeDetailItem.setRoleDescription("Technical Analyst");
         employeeDetailItem.setSalary(new BigDecimal("100000.00"));
+        sparseEmployeeDetailItem = new SparseEmployeeDetailItem(1, "Karl");
+        sparseEmployeeDetailItems = new ArrayList<>();
+        sparseEmployeeDetailItems.add(sparseEmployeeDetailItem);
         when(employeeDetailClient.getEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         when(employeeDetailClient.deleteEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         when(employeeDetailClient.postEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         when(employeeDetailClient.putEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));
+        when(employeeDetailClient.findAllBy(PageRequest.of(0, 20))).thenReturn(ResponseEntity.ok(sparseEmployeeDetailItems));
         //
         employeeProjectItems = new ArrayList<>();
         employeeProjectItem = new EmployeeProjectItem();
@@ -101,7 +114,7 @@ public class EmployeeInfoControllerTest {
 //                new Employee(1L,"Frodo", "Baggins", "ring bearer"),
 //                new Employee(2L,"Bilbo", "Baggins", "burglar")));
 
-        mvc.perform(get("/employee/info/767691").accept(MediaType.APPLICATION_JSON_VALUE))
+        mvc.perform(get("/employee/info/1").accept(MediaType.APPLICATION_JSON_VALUE))
             .andDo(print())    
             .andExpect(status().isOk())
     
@@ -137,7 +150,18 @@ public class EmployeeInfoControllerTest {
             .andReturn();
 */                    
     }
-/*    
+
+    @Test
+    public void testEmployeeList() throws Exception {
+
+        mvc.perform(get("/employee/info?page=0&size=20").accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())    
+            .andExpect(status().isOk())
+    
+            .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
+            .andReturn();
+    }
+    /*    
     @Test
     public void testGet() {
         ResponseEntity<EmployeeInfoResource> getEmployeeInfo = employeeInfoController.getEmployeeInfo(1);

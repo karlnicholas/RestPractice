@@ -2,10 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>employeeapi</artifactId>
+    <artifactId>spring-cloud-starter-bootstrap</artifactId>
     <packaging>jar</packaging>
-    <name>EmployeeApi</name>
-    <description>Demo project for Spring Boot</description>
     <parent>
         <groupId>assignment</groupId>
         <artifactId>parent</artifactId>
@@ -27,11 +25,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>assignment</groupId>
-            <artifactId>employeeitems</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

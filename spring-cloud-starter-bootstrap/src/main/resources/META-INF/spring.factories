@@ -1,0 +1,6 @@
+
+# Environment Post Processor
+org.springframework.boot.env.EnvironmentPostProcessor=com.elderbyte.spring.cloud.bootstrap.feign.HystrixEnvironmentConfigurer
+
+# Auto configuration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.elderbyte.spring.cloud.bootstrap.BootstrapAutoConfiguration
