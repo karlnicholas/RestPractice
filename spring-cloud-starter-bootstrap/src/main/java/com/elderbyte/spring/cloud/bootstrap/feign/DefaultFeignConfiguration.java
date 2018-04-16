@@ -24,7 +24,6 @@ import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
  * Feign should get out of the box support for most of these things anyway.
  */
 @Configuration
-@Import(EnableCircuitBreakerOnHystrix.class)
 public class DefaultFeignConfiguration {
 
     @Autowired
