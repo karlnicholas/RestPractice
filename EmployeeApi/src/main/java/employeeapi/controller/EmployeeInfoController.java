@@ -51,11 +51,11 @@ public class EmployeeInfoController {
         Pageable pageable, 
         PagedResourcesAssembler<SparseEmployeeDetailItem> pagedResourcesAssembler        
     ) {
-        ResponseEntity<Page<SparseEmployeeDetailItem>> idsResponse = employeeDetailClient.findAllBy(pageable);
-
+        ResponseEntity<Page<SparseEmployeeDetailItem>> idsResponse = employeeDetailClient.findAllBy(pageable);                
+//        PagedResources<SparseEmployeeDetailResource> resources = pagedResourcesAssembler.toResource(idsResponse.getBody(), sparseAssembler);
         Link link = new Link(linkTo(EmployeeInfoController.class).toString() + "{?page,size}").withSelfRel();
-                
         PagedResources<SparseEmployeeDetailResource> resources = pagedResourcesAssembler.toResource(idsResponse.getBody(), sparseAssembler, link);
+        resources.add( linkTo(methodOn(EmployeeInfoController.class).getEmployeeInfo(null)).withRel("info") );
         return new ResponseEntity<>(resources, HttpStatus.OK);
     }
     
@@ -77,6 +77,8 @@ public class EmployeeInfoController {
             );
             
             EmployeeInfoResource resourceWithLinks = assembler.toResource(resource);
+            resourceWithLinks.add( new Link(linkTo(EmployeeInfoController.class).toString() + "{?page,size}").withRel("list") );
+            resourceWithLinks.add( linkTo(methodOn(EmployeeInfoController.class).getEmployeeInfo(null)).withRel("info") );
             return ResponseEntity.ok(resourceWithLinks);
             
         } catch (InterruptedException | ExecutionException e) {
