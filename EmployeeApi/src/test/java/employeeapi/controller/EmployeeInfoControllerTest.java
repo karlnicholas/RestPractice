@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -60,7 +61,7 @@ public class EmployeeInfoControllerTest {
     private EmployeeAddressItem employeeAddressItem;
     private EmployeeDetailItem employeeDetailItem;
     private SparseEmployeeDetailItem sparseEmployeeDetailItem;
-    private List<SparseEmployeeDetailItem> sparseEmployeeDetailItems;
+    private Page<SparseEmployeeDetailItem> sparseEmployeeDetailItems;
     private EmployeeProjectItem employeeProjectItem;
     private List<EmployeeProjectItem> employeeProjectItems;
 
@@ -86,8 +87,8 @@ public class EmployeeInfoControllerTest {
         employeeDetailItem.setRoleDescription("Technical Analyst");
         employeeDetailItem.setSalary(new BigDecimal("100000.00"));
         sparseEmployeeDetailItem = new SparseEmployeeDetailItem(1, "Karl");
-        sparseEmployeeDetailItems = new ArrayList<>();
-        sparseEmployeeDetailItems.add(sparseEmployeeDetailItem);
+        sparseEmployeeDetailItems = Page.empty();
+//        sparseEmployeeDetailItems.add(sparseEmployeeDetailItem);
         when(employeeDetailClient.getEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         when(employeeDetailClient.deleteEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         when(employeeDetailClient.postEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));

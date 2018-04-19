@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +46,7 @@ public class EmployeeDetailController {
     @FeignClient(name="EmployeeDetail")
     public interface EmployeeDetailClient {
         @GetMapping(value="/employee/detail", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<List<SparseEmployeeDetailItem>> findAllBy(Pageable pageable);
+        public ResponseEntity<Page<SparseEmployeeDetailItem>> findAllBy(Pageable pageable);
 
         @GetMapping(value="/employee/detail/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeDetailItem> getEmployeeDetail(@PathVariable("empId") Integer empId);
