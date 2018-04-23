@@ -5,6 +5,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import employeeaddress.item.EmployeeAddressItem;
-import employeeapi.resource.ControllerResource;
 import employeeapi.resource.EmployeeAddressResource;
 import employeeapi.resource.EmployeeAddressResourceAssembler;
 
@@ -29,8 +29,8 @@ public class EmployeeAddressController {
     private EmployeeAddressResourceAssembler assembler;
     
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ControllerResource> getApi() {
-        ControllerResource resource = new ControllerResource();
+    public ResponseEntity<ResourceSupport> getApi() {
+        ResourceSupport resource = new ResourceSupport();
         resource.add( linkTo(methodOn(EmployeeAddressController.class).getEmployeeAddress(null)).withRel("get") );
         resource.add( linkTo(methodOn(EmployeeAddressController.class).postEmployeeAddress(null)).withRel("create"));
         resource.add( linkTo(methodOn(EmployeeAddressController.class).putEmployeeAddress(null)).withRel("update"));
@@ -40,23 +40,22 @@ public class EmployeeAddressController {
     
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeAddressResource> getEmployeeAddress(@PathVariable("empId") Integer empId) {
-        ResponseEntity<EmployeeAddressItem> employeeAddressItemResponse = employeeAddressClient.getEmployeeAddress(empId);
-        return ResponseEntity.ok(assembler.toResource(employeeAddressItemResponse.getBody()));
+        return ResponseEntity.ok( assembler.toResource(employeeAddressClient.getEmployeeAddress(empId).getBody()) );
     }
     
     @PostMapping(value="/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressItem> postEmployeeAddress(EmployeeAddressItem employeeAddressItem) {
-        return employeeAddressClient.postEmployeeAddress(employeeAddressItem);
+    public ResponseEntity<EmployeeAddressResource> postEmployeeAddress(EmployeeAddressItem employeeAddressItem) {
+        return ResponseEntity.ok( assembler.toResource(employeeAddressClient.postEmployeeAddress(employeeAddressItem).getBody()) );
     }
 
     @PutMapping(value="/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressItem> putEmployeeAddress(EmployeeAddressItem employeeAddressItem) {
-        return employeeAddressClient.putEmployeeAddress(employeeAddressItem);
+    public ResponseEntity<EmployeeAddressResource> putEmployeeAddress(EmployeeAddressItem employeeAddressItem) {
+        return ResponseEntity.ok( assembler.toResource(employeeAddressClient.putEmployeeAddress(employeeAddressItem).getBody()) );
     }
 
     @DeleteMapping(value="/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressItem> deleteEmployeeAddress(@PathVariable("empId") Integer empId) {
-        return employeeAddressClient.deleteEmployeeAddress(empId);
+    public ResponseEntity<EmployeeAddressResource> deleteEmployeeAddress(@PathVariable("empId") Integer empId) {
+        return ResponseEntity.ok( assembler.toResource(employeeAddressClient.deleteEmployeeAddress(empId).getBody()) );
     }
     
     // use a feign client to access the EmployeeAddress server so that it "loadbalances".
