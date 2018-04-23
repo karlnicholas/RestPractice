@@ -6,7 +6,7 @@ server:
 logging:
   level:
     com.netflix.discovery: 'OFF'
-    employeeapi: 'OFF'
+    employeeapi: 'INFO'
 eureka:
   client:
     serviceUrl:
