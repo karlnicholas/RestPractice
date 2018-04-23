@@ -1,5 +1,8 @@
 package employeeapi.controller;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import employeeaddress.item.EmployeeAddressItem;
+import employeeapi.resource.ControllerResource;
 import employeeapi.resource.EmployeeAddressResource;
 import employeeapi.resource.EmployeeAddressResourceAssembler;
 
@@ -25,8 +29,13 @@ public class EmployeeAddressController {
     private EmployeeAddressResourceAssembler assembler;
     
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getApi() {
-        return ResponseEntity.ok("List of Employee addresses not supported");
+    public ResponseEntity<ControllerResource> getApi() {
+        ControllerResource resource = new ControllerResource();
+        resource.add( linkTo(methodOn(EmployeeAddressController.class).getEmployeeAddress(null)).withRel("get") );
+        resource.add( linkTo(methodOn(EmployeeAddressController.class).postEmployeeAddress(null)).withRel("create"));
+        resource.add( linkTo(methodOn(EmployeeAddressController.class).putEmployeeAddress(null)).withRel("update"));
+        resource.add( linkTo(methodOn(EmployeeAddressController.class).deleteEmployeeAddress(null)).withRel("delete"));
+        return ResponseEntity.ok(resource);
     }
     
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
