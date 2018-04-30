@@ -49,7 +49,7 @@ public class EmployeeInfoService {
     }
 
     @Async
-    public CompletableFuture<List<EmployeeProjectItem>> getEmployeeProject(Integer empId) throws InterruptedException{
+    public CompletableFuture<List<EmployeeProjectItem>> getEmployeeProjects(Integer empId) throws InterruptedException{
         logger.debug("Async getting employeeProject");
         ResponseEntity<List<EmployeeProjectItem>> employeeProjectResponse = employeeProjectClient.getEmployeeProjects(empId);
         if ( employeeProjectResponse.getStatusCode() != HttpStatus.OK) {

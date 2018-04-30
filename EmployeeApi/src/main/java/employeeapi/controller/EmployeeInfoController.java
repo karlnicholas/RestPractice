@@ -62,7 +62,7 @@ public class EmployeeInfoController {
             CompletableFuture<EmployeeDetailItem> employeeDetailFuture 
                 = employeeInfoService.getEmployeeDetail(empId);
             CompletableFuture<List<EmployeeProjectItem>> employeeProjectFuture 
-                = employeeInfoService.getEmployeeProject(empId);
+                = employeeInfoService.getEmployeeProjects(empId);
             
             EmployeeInfoResource employeeInfo = new EmployeeInfoResource(
                 employeeAddressFuture.get(), 

@@ -1,7 +1,5 @@
 package employeedetail.controller;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +49,7 @@ public class EmployeeDetailController {
     }
 
     @DeleteMapping(value="/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeDetailItem> deleteEmployeeDetail(@PathVariable("id") Integer empId) {
+    public ResponseEntity<EmployeeDetailItem> deleteEmployeeDetail(@PathVariable("empId") Integer empId) {
         EmployeeDetail employeeDetail = repository.getOne(empId);
         repository.delete(employeeDetail);        
         return ResponseEntity.ok(employeeDetail.asEmployeeDetailItem());

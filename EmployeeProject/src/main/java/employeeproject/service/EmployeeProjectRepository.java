@@ -6,5 +6,4 @@ import employeeproject.model.EmployeeProject;
 import employeeproject.model.EmployeeProjectId;
 
 public interface EmployeeProjectRepository extends JpaRepository<EmployeeProject, EmployeeProjectId> {
-
 }

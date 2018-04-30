@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import employeeapi.resource.EmployeeDetailResource;
+import employeeapi.resource.EmployeeDetailResourceAssembler;
 import employeedetail.item.EmployeeDetailItem;
 import employeedetail.item.SparseEmployeeDetailItem;
 
@@ -26,6 +28,8 @@ import employeedetail.item.SparseEmployeeDetailItem;
 public class EmployeeDetailController {
     @Autowired
     private EmployeeDetailClient employeeDetailClient;
+    @Autowired
+    private EmployeeDetailResourceAssembler assembler;
     
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceSupport> getApi() {
@@ -38,23 +42,23 @@ public class EmployeeDetailController {
     }
     
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeDetailItem> getEmployeeDetail(@PathVariable("empId") Integer empId) {
-        return employeeDetailClient.getEmployeeDetail(empId);
+    public ResponseEntity<EmployeeDetailResource> getEmployeeDetail(@PathVariable("empId") Integer empId) {
+        return ResponseEntity.ok( assembler.toResource(employeeDetailClient.getEmployeeDetail(empId).getBody()) );
     }
     
     @PostMapping(value="/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeDetailItem> postEmployeeDetail(EmployeeDetailItem employeeDetailItem) {
-        return employeeDetailClient.postEmployeeDetail(employeeDetailItem);
+    public ResponseEntity<EmployeeDetailResource> postEmployeeDetail(EmployeeDetailItem employeeDetailItem) {
+        return ResponseEntity.ok( assembler.toResource(employeeDetailClient.postEmployeeDetail(employeeDetailItem).getBody()) );
     }
 
     @PutMapping(value="/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeDetailItem> putEmployeeDetail(EmployeeDetailItem employeeDetailItem) {
-        return employeeDetailClient.putEmployeeDetail(employeeDetailItem);
+    public ResponseEntity<EmployeeDetailResource> putEmployeeDetail(EmployeeDetailItem employeeDetailItem) {
+        return ResponseEntity.ok( assembler.toResource(employeeDetailClient.putEmployeeDetail(employeeDetailItem).getBody()) );
     }
 
     @DeleteMapping(value="/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeDetailItem> deleteEmployeeDetail(@PathVariable("empId") Integer empId) {
-        return employeeDetailClient.deleteEmployeeDetail(empId);
+    public ResponseEntity<EmployeeDetailResource> deleteEmployeeDetail(@PathVariable("empId") Integer empId) {
+        return ResponseEntity.ok( assembler.toResource(employeeDetailClient.deleteEmployeeDetail(empId).getBody()) );
     }
     
     @FeignClient(name="EmployeeDetail")

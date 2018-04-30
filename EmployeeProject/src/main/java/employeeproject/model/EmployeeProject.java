@@ -1,57 +1,38 @@
 package employeeproject.model;
 
+import java.io.Serializable;
+
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 
 import employeeproject.item.EmployeeProjectItem;
 
 @Entity
-@IdClass(EmployeeProjectId.class)
-public class EmployeeProject {
-    @Id private Integer empId;    
-    @Id private String projectId;
-    private String projectName;
-    private String techstack;
+@SuppressWarnings("serial")
+public class EmployeeProject implements Serializable {
+    @EmbeddedId
+    private EmployeeProjectId employeeProjectId;
 
     public EmployeeProject() {}
+    public EmployeeProject(Integer empId, Integer projectId) {
+        employeeProjectId = new EmployeeProjectId(empId, projectId); 
+    }
+
     public EmployeeProject(EmployeeProjectItem employeeProjectItem) {
-        empId = employeeProjectItem.getEmpId();
-        projectId = employeeProjectItem.getProjectId();
-        projectName = employeeProjectItem.getProjectName();
-        techstack = employeeProjectItem.getTechstack();
+        employeeProjectId = new EmployeeProjectId(
+                employeeProjectItem.getEmpId(), 
+                employeeProjectItem.getProjectId()
+            );
     }
-    
+    public EmployeeProjectId getEmployeeProjectId() {
+        return employeeProjectId;
+    }
+
+    public void setEmployeeProjectId(EmployeeProjectId employeeProjectId) {
+        this.employeeProjectId = employeeProjectId;
+    }
     public EmployeeProjectItem asEmployeeProjectItem() {
-        EmployeeProjectItem employeeProjectItem = new EmployeeProjectItem();
-        employeeProjectItem.setEmpId(empId);
-        employeeProjectItem.setProjectId(projectId);
-        employeeProjectItem.setProjectName(projectName);
-        employeeProjectItem.setTechstack(techstack);
-        return employeeProjectItem;
+        return new EmployeeProjectItem( employeeProjectId.getEmpId(), employeeProjectId.getProjectId() ); 
     }
-    public Integer getEmpId() {
-        return empId;
-    }
-    public void setEmpId(Integer empId) {
-        this.empId = empId;
-    }
-    public String getProjectId() {
-        return projectId;
-    }
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-    public String getProjectName() {
-        return projectName;
-    }
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-    public String getTechstack() {
-        return techstack;
-    }
-    public void setTechstack(String techstack) {
-        this.techstack = techstack;
-    }
+
 }

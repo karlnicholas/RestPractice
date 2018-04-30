@@ -60,7 +60,7 @@ public class EmployeeInfoControllerTest {
     
     private EmployeeAddressItem employeeAddressItem;
     private EmployeeDetailItem employeeDetailItem;
-    private SparseEmployeeDetailItem sparseEmployeeDetailItem;
+//    private SparseEmployeeDetailItem sparseEmployeeDetailItem;
     private Page<SparseEmployeeDetailItem> sparseEmployeeDetailItems;
     private EmployeeProjectItem employeeProjectItem;
     private List<EmployeeProjectItem> employeeProjectItems;
@@ -86,7 +86,7 @@ public class EmployeeInfoControllerTest {
         employeeDetailItem.setRole("4");
         employeeDetailItem.setRoleDescription("Technical Analyst");
         employeeDetailItem.setSalary(new BigDecimal("100000.00"));
-        sparseEmployeeDetailItem = new SparseEmployeeDetailItem(1, "Karl");
+//        sparseEmployeeDetailItem = new SparseEmployeeDetailItem(1, "Karl");
         sparseEmployeeDetailItems = Page.empty();
 //        sparseEmployeeDetailItems.add(sparseEmployeeDetailItem);
         when(employeeDetailClient.getEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
@@ -98,12 +98,10 @@ public class EmployeeInfoControllerTest {
         employeeProjectItems = new ArrayList<>();
         employeeProjectItem = new EmployeeProjectItem();
         employeeProjectItem.setEmpId(1);
-        employeeProjectItem.setProjectId("1004");
-        employeeProjectItem.setProjectName("Nemo");
-        employeeProjectItem.setTechstack("Java EE");
+        employeeProjectItem.setProjectId(1);
         employeeProjectItems.add(employeeProjectItem);
         when(employeeProjectClient.getEmployeeProjects(1)).thenReturn(ResponseEntity.ok(employeeProjectItems));
-        when(employeeProjectClient.deleteEmployeeProject(1, "1004")).thenReturn(ResponseEntity.ok(employeeProjectItem));
+        when(employeeProjectClient.deleteEmployeeProject(1, 1)).thenReturn(ResponseEntity.ok(employeeProjectItem));
         when(employeeProjectClient.postEmployeeProject(employeeProjectItem)).thenReturn(ResponseEntity.ok(employeeProjectItem));
         when(employeeProjectClient.putEmployeeProject(employeeProjectItem)).thenReturn(ResponseEntity.ok(employeeProjectItem));
         

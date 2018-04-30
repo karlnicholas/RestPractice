@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class EmployeeController {
         resource.add( linkTo(methodOn(EmployeeAddressController.class).getApi()).withRel("address") );
         resource.add( linkTo(methodOn(EmployeeDetailController.class).getApi()).withRel("detail") );
         resource.add( linkTo(methodOn(EmployeeProjectController.class).getApi()).withRel("project") );
-        resource.add( linkTo(methodOn(EmployeeInfoController.class).findAllBy(null, null)).withRel("info") );
+        resource.add( new Link(linkTo(EmployeeInfoController.class).toString() + "{?page,size}").withSelfRel() );
         return ResponseEntity.ok(resource);
     }
 

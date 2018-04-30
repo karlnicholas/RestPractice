@@ -1,14 +1,12 @@
 package employeeapi.resource;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.hateoas.ResourceSupport;
 
 import employeeaddress.item.EmployeeAddressItem;
 import employeedetail.item.EmployeeDetailItem;
-import employeeproject.item.EmployeeProject;
 import employeeproject.item.EmployeeProjectItem;
 
 public class EmployeeInfoResource extends ResourceSupport {
@@ -23,7 +21,7 @@ public class EmployeeInfoResource extends ResourceSupport {
     private String role;
     private BigDecimal salary;
     private String roleDescription;
-    private List<EmployeeProject> projects;
+    private List<EmployeeProjectItem> projects;
 
     public EmployeeInfoResource() {}
     public EmployeeInfoResource(
@@ -46,15 +44,7 @@ public class EmployeeInfoResource extends ResourceSupport {
         role = employeeDetailItem.getRole();
         salary = employeeDetailItem.getSalary();
         roleDescription = employeeDetailItem.getRoleDescription();
-        
-        projects = new ArrayList<>();
-        for( EmployeeProjectItem employeeProjectItem: employeeProjectItems ) {
-            projects.add(  new EmployeeProject(
-                employeeProjectItem.getProjectId(), 
-                employeeProjectItem.getProjectName(), 
-                employeeProjectItem.getTechstack()
-            ));
-        }
+        projects = employeeProjectItems;
     }
     public void fromEmployeeInfoResource(EmployeeInfoResource resource) {
         empId = resource.getEmpId();
@@ -68,7 +58,7 @@ public class EmployeeInfoResource extends ResourceSupport {
         role = resource.getRole();
         salary = resource.getSalary();
         roleDescription = resource.getRoleDescription();
-        projects = resource.getProjects();
+        projects = resource.projects;
     }
     public Integer getEmpId() {
         return empId;
@@ -136,10 +126,10 @@ public class EmployeeInfoResource extends ResourceSupport {
     public void setRoleDescription(String roleDescription) {
         this.roleDescription = roleDescription;
     }
-    public List<EmployeeProject> getProjects() {
+    public List<EmployeeProjectItem> getProjects() {
         return projects;
     }
-    public void setProjects(List<EmployeeProject> projects) {
+    public void setProjects(List<EmployeeProjectItem> projects) {
         this.projects = projects;
     }
 }

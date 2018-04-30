@@ -1,6 +1,8 @@
 spring:
   application:
     name: EmployeeProject
+  jpa:
+    show-sql: true
 server:
   port: ${PORT:0}
 logging:
