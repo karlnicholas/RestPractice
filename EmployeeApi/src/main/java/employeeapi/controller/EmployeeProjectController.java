@@ -8,7 +8,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,15 +45,21 @@ public class EmployeeProjectController {
     }
 
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<EmployeeProjectResource>> getEmployeeProjects(@PathVariable("empId") Integer empId ) {
+    public ResponseEntity<Resources<EmployeeProjectResource>> getEmployeeProjects(@PathVariable("empId") Integer empId ) {
+        Link linkSelf = linkTo(methodOn(EmployeeProjectController.class).getEmployeeProjects(empId)).slash('/').withSelfRel();
+        Link linkCreate = linkTo(methodOn(EmployeeProjectController.class).postEmployeeProject(null)).withRel("create");
+
         ResponseEntity<List<EmployeeProjectItem>> idsResponse = employeeProjectClient.getEmployeeProjects(empId);
         List<EmployeeProjectResource> resources = new ArrayList<>();
         for ( EmployeeProjectItem item: idsResponse.getBody() ) {
             resources.add( assembler.toResource(item));
         }
-        return new ResponseEntity<>(resources, HttpStatus.OK);
+        //Wrap your resources in a Resources object.
+        Resources<EmployeeProjectResource> resourceList = new Resources<EmployeeProjectResource>(resources, linkSelf, linkCreate);
+
+        return new ResponseEntity<Resources<EmployeeProjectResource>>(resourceList, HttpStatus.OK);    
     }
-    
+
     @PostMapping(value="/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeProjectResource> postEmployeeProject(EmployeeProjectItem employeeProjectItem) {
         return ResponseEntity.ok( assembler.toResource(employeeProjectClient.postEmployeeProject(employeeProjectItem).getBody()) );

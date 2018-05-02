@@ -26,7 +26,6 @@ public class EmployeeDetailResourceAssembler
 
         // createResource(employeeAddressItem);
         EmployeeDetailResource resource = createResourceWithId(item.getEmpId(), item);
-        resource.fromEmployeeDetailItem(item);
         // … do further mapping
         resource.add(linkTo(methodOn(EmployeeDetailController.class).deleteEmployeeDetail(item.getEmpId())).withRel("delete"));        
         resource.add(linkTo(methodOn(EmployeeDetailController.class).putEmployeeDetail(item)).withRel("update"));

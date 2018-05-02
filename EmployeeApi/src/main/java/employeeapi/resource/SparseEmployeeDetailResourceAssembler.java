@@ -22,7 +22,6 @@ public class SparseEmployeeDetailResourceAssembler
 
         // createResource(employeeAddressItem);
         SparseEmployeeDetailResource resource = createResourceWithId(item.getEmpId(), item);
-        resource.fromSparseEmployeeDetailItem(item);
         // … do further mapping
         return resource;
     }
