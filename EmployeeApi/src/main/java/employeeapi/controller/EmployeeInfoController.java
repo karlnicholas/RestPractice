@@ -55,7 +55,7 @@ public class EmployeeInfoController {
 
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeInfoResource> getEmployeeInfo(@PathVariable("empId") Integer empId) {
-        logger.debug("EmployeeAddressController::getEmployeeAddress empId = " + empId);
+        logger.debug("empId = " + empId);
         try {
             CompletableFuture<EmployeeAddressItem> employeeAddressFuture 
                 = employeeInfoService.getEmployeeAddress(empId);

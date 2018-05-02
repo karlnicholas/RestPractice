@@ -21,6 +21,7 @@ public class EmployeeInfoResourceAssembler
 
         // createResource(employeeAddressItem);
         EmployeeInfoResource resource = createResourceWithId(employeeInfoResource.getEmpId(), employeeInfoResource);
+        resource.fromEmployeeInfoResource(employeeInfoResource);
         // … do further mapping
         return resource;
     }
