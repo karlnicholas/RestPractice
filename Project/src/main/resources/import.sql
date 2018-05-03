@@ -1,0 +1,2 @@
+insert into project(project_id, project_name, techstack) values (1, 'COCAL', 'Spring Framework, Spring Rest');
+insert into project(project_id, project_name, techstack) values (2, 'GRT', 'Spring Framework, Spring JPA');

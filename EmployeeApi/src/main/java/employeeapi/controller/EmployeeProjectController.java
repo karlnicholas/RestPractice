@@ -19,12 +19,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import employeeapi.resource.EmployeeProjectResource;
 import employeeapi.resource.EmployeeProjectResourceAssembler;
 import employeeproject.item.EmployeeProjectItem;
+import project.item.ProjectItem;
 
 @RestController
 @RequestMapping("/employee/projects")
@@ -88,5 +90,22 @@ public class EmployeeProjectController {
 
         @DeleteMapping(value="/employee/projects/delete/{empId}/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeProjectItem> deleteEmployeeProject(@PathVariable("empId") Integer empId, @PathVariable("projectId") Integer projectId);
+    }    
+    @FeignClient(name="Project")
+    public interface ProjectClient {
+        @GetMapping(value="/project/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<ProjectItem> getProject(@PathVariable("projectId") Integer projectId);
+        
+        @GetMapping(value="/project/projects", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<List<ProjectItem>> getProjects(@RequestBody(required=true) List<Integer> projectIds);
+
+        @PostMapping(value="/project/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<ProjectItem> postProject(ProjectItem employeeProjectItem);
+
+        @PutMapping(value="/project/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<ProjectItem> putProject(ProjectItem employeeProjectItem);
+
+        @DeleteMapping(value="/project/delete/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<ProjectItem> deleteProject(@PathVariable("projectId") Integer projectId);
     }    
 }

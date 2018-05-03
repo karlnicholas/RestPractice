@@ -28,7 +28,7 @@ import employeeapi.resource.SparseEmployeeDetailResourceAssembler;
 import employeeapi.service.EmployeeInfoService;
 import employeedetail.item.EmployeeDetailItem;
 import employeedetail.item.SparseEmployeeDetailItem;
-import employeeproject.item.EmployeeProjectItem;
+import project.item.ProjectItem;
 
 @RestController
 @RequestMapping("/employee/info")
@@ -61,13 +61,13 @@ public class EmployeeInfoController {
                 = employeeInfoService.getEmployeeAddress(empId);
             CompletableFuture<EmployeeDetailItem> employeeDetailFuture 
                 = employeeInfoService.getEmployeeDetail(empId);
-            CompletableFuture<List<EmployeeProjectItem>> employeeProjectFuture 
+            CompletableFuture<List<ProjectItem>> employeeProjectFuture 
                 = employeeInfoService.getEmployeeProjects(empId);
             
             EmployeeInfoResource employeeInfo = new EmployeeInfoResource(
-                employeeAddressFuture.get(), 
+                employeeAddressFuture.get(),  
                 employeeDetailFuture.get(), 
-                employeeProjectFuture.get() 
+                employeeProjectFuture.get()
             );
             
             return ResponseEntity.ok(assembler.toResource(employeeInfo));

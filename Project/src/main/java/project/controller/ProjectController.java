@@ -1,4 +1,6 @@
-package employeeproject.controller;
+package project.controller;
+
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,13 +14,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import employeeproject.item.ProjectItem;
 import employeeproject.item.SparseProjectItem;
-import employeeproject.model.Project;
-import employeeproject.service.ProjectRepository;
+import project.item.ProjectItem;
+import project.model.Project;
+import project.service.ProjectRepository;
 
 @RestController
 @RequestMapping("/project")
@@ -33,12 +36,17 @@ public class ProjectController {
         return ResponseEntity.ok(projectPepository.findAllBy(pageable));
     }
     
-    @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProjectItem> getProject(@PathVariable("projectId") Integer projectId) {
         logger.info("get: " + projectId);
         return ResponseEntity.ok(projectPepository.getOne(projectId).asProjectItem());
     }
     
+    @PostMapping(value="/projects", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ProjectItem>> getProjects(@RequestBody(required=true) List<Integer> projectIds) {
+        return ResponseEntity.ok(projectPepository.findAllByProjectIdIn(projectIds));
+    }
+
     @PostMapping(value="/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProjectItem> postEmployeeProject(ProjectItem projectItem) {
         return ResponseEntity.ok(projectPepository.save(new Project(projectItem)).asProjectItem());

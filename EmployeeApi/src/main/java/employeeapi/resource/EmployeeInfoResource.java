@@ -7,7 +7,7 @@ import org.springframework.hateoas.ResourceSupport;
 
 import employeeaddress.item.EmployeeAddressItem;
 import employeedetail.item.EmployeeDetailItem;
-import employeeproject.item.EmployeeProjectItem;
+import project.item.ProjectItem;
 
 public class EmployeeInfoResource extends ResourceSupport {
     private Integer empId;
@@ -21,13 +21,13 @@ public class EmployeeInfoResource extends ResourceSupport {
     private String role;
     private BigDecimal salary;
     private String roleDescription;
-    private List<EmployeeProjectItem> projects;
+    private List<ProjectItem> projects;
 
     public EmployeeInfoResource() {}
     public EmployeeInfoResource(
             EmployeeAddressItem employeeAddressItem, 
             EmployeeDetailItem employeeDetailItem, 
-            List<EmployeeProjectItem> employeeProjectItems 
+            List<ProjectItem> employeeProjectItems 
     ) {
         if ( !employeeAddressItem.getEmpId().equals(employeeDetailItem.getEmpId()) ) {
             throw new IllegalArgumentException("Invalid EmpIds");
@@ -126,10 +126,10 @@ public class EmployeeInfoResource extends ResourceSupport {
     public void setRoleDescription(String roleDescription) {
         this.roleDescription = roleDescription;
     }
-    public List<EmployeeProjectItem> getProjects() {
+    public List<ProjectItem> getProjects() {
         return projects;
     }
-    public void setProjects(List<EmployeeProjectItem> projects) {
+    public void setProjects(List<ProjectItem> projects) {
         this.projects = projects;
     }
 }

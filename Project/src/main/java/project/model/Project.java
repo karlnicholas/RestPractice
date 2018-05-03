@@ -1,9 +1,9 @@
-package employeeproject.model;
+package project.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import employeeproject.item.ProjectItem;
+import project.item.ProjectItem;
 
 @Entity
 public class Project {
