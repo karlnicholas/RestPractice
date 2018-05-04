@@ -24,9 +24,9 @@ import employeeproject.model.EmployeeProjectId;
 import employeeproject.service.EmployeeProjectRepository;
 
 @RestController
-@RequestMapping("/employee/projects")
-public class ProjectEmployeeController {
-    private static final Logger logger = LoggerFactory.getLogger(ProjectEmployeeController.class);
+@RequestMapping("/employee/project")
+public class EmployeeProjectController {
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeProjectController.class);
     @Autowired
     private EmployeeProjectRepository employeeProjectPepository;
 

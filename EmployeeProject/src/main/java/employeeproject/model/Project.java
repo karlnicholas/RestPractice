@@ -1,4 +1,4 @@
-package project.model;
+package employeeproject.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

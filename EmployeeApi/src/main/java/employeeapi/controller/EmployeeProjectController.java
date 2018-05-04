@@ -19,17 +19,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import employeeapi.resource.EmployeeProjectResource;
 import employeeapi.resource.EmployeeProjectResourceAssembler;
 import employeeproject.item.EmployeeProjectItem;
-import project.item.ProjectItem;
 
 @RestController
-@RequestMapping("/employee/projects")
+@RequestMapping("/employee/project")
 public class EmployeeProjectController {
     @Autowired
     private EmployeeProjectClient employeeProjectClient;
@@ -39,7 +37,7 @@ public class EmployeeProjectController {
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceSupport> getApi() {
         ResourceSupport resource = new ResourceSupport();
-        resource.add( linkTo(methodOn(EmployeeProjectController.class).getEmployeeProjects(null)).withRel("projects") );
+        resource.add( linkTo(methodOn(EmployeeProjectController.class).getEmployeeProjects(null)).withRel("/") );
         resource.add( linkTo(methodOn(EmployeeProjectController.class).postEmployeeProject(null)).withRel("create"));
         resource.add( linkTo(methodOn(EmployeeProjectController.class).putEmployeeProject(null)).withRel("update"));
         resource.add( linkTo(methodOn(EmployeeProjectController.class).deleteEmployeeProject(null, null)).withRel("delete"));
@@ -79,33 +77,16 @@ public class EmployeeProjectController {
 
     @FeignClient(name="EmployeeProject")
     public interface EmployeeProjectClient {
-        @GetMapping(value="/employee/projects/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+        @GetMapping(value="/employee/project/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<List<EmployeeProjectItem>> getEmployeeProjects(@PathVariable("empId") Integer empId);
         
-        @PostMapping(value="/employee/projects/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+        @PostMapping(value="/employee/project/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeProjectItem> postEmployeeProject(EmployeeProjectItem employeeProjectItem);
 
-        @PutMapping(value="/employee/projects/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+        @PutMapping(value="/employee/project/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeProjectItem> putEmployeeProject(EmployeeProjectItem employeeProjectItem);
 
-        @DeleteMapping(value="/employee/projects/delete/{empId}/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
+        @DeleteMapping(value="/employee/project/delete/{empId}/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeProjectItem> deleteEmployeeProject(@PathVariable("empId") Integer empId, @PathVariable("projectId") Integer projectId);
-    }    
-    @FeignClient(name="Project")
-    public interface ProjectClient {
-        @GetMapping(value="/project/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ProjectItem> getProject(@PathVariable("projectId") Integer projectId);
-        
-        @GetMapping(value="/project/projects", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<List<ProjectItem>> getProjects(@RequestBody(required=true) List<Integer> projectIds);
-
-        @PostMapping(value="/project/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ProjectItem> postProject(ProjectItem employeeProjectItem);
-
-        @PutMapping(value="/project/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ProjectItem> putProject(ProjectItem employeeProjectItem);
-
-        @DeleteMapping(value="/project/delete/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ProjectItem> deleteProject(@PathVariable("projectId") Integer projectId);
     }    
 }
