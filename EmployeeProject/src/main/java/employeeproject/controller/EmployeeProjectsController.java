@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.collect.Lists;
-
 import employeeproject.service.ProjectRepository;
 import project.item.ProjectItem;
 
@@ -24,19 +22,9 @@ public class EmployeeProjectsController {
     @Autowired
     private ProjectRepository projectPepository;
 
-    @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ProjectItem>> getProjectsForTest() {
-        return ResponseEntity.ok( projectPepository.findAllForTest());
-    }
-
-    @GetMapping(value="/test2", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ProjectItem>> getProjectsForTest2() {
-        return ResponseEntity.ok( projectPepository.findAllBy());
-    }
-
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ProjectItem>> getProjects(@PathVariable("empId") Integer empId) {
         logger.info("empId = " + empId);
-        return ResponseEntity.ok( Lists.transform(projectPepository.findAllByEmployeeProjectEmpId(empId), p->p.asProjectItem()));
+        return ResponseEntity.ok( projectPepository.findAllByEmployeeProjectEmpId(empId));
     }
 }
