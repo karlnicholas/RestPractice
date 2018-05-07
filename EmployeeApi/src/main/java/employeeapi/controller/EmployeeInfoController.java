@@ -63,7 +63,13 @@ public class EmployeeInfoController {
                 = employeeInfoService.getEmployeeDetail(empId);
             CompletableFuture<List<ProjectItem>> employeeProjectFuture 
                 = employeeInfoService.getEmployeeProjects(empId);
-            
+/*            
+            CompletableFuture.allOf(
+                    employeeAddressFuture,
+                    employeeDetailFuture, 
+                    employeeProjectFuture
+                    ).join();
+*/
             EmployeeInfoResource employeeInfo = new EmployeeInfoResource(
                 employeeAddressFuture.get(),  
                 employeeDetailFuture.get(), 

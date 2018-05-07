@@ -42,7 +42,7 @@ public class EmployeeProjectsController {
     public ResponseEntity<Resources<ProjectResource>> getEmployeeProjects(@PathVariable("empId") Integer empId ) {
         Link linkSelf = linkTo(methodOn(EmployeeProjectsController.class).getEmployeeProjects(empId)).slash('/').withSelfRel();
 
-        ResponseEntity<List<ProjectItem>> idsResponse = employeeProjectsClient.getEmployeeProjects(empId);
+        ResponseEntity<List<ProjectItem>> idsResponse = employeeProjectsClient.getEmployeeProjectsFull(empId);
         List<ProjectResource> resources = new ArrayList<>();
         for ( ProjectItem item: idsResponse.getBody() ) {
             resources.add( assembler.toResource(item));
@@ -56,7 +56,6 @@ public class EmployeeProjectsController {
     @FeignClient(name="EmployeeProject")
     public interface EmployeeProjectsClient {
         @GetMapping(value="/employee/projects/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<List<ProjectItem>> getEmployeeProjects(@PathVariable("empId") Integer empId);
-        
+        public ResponseEntity<List<ProjectItem>> getEmployeeProjectsFull(@PathVariable("empId") Integer empId);
     }    
 }

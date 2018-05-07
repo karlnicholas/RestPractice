@@ -51,7 +51,7 @@ public class EmployeeInfoService {
     @Async
     public CompletableFuture<List<ProjectItem>> getEmployeeProjects(Integer empId) throws InterruptedException{
         logger.debug("Async getting employeeProject");
-        ResponseEntity<List<ProjectItem>> employeeProjectsResponse = employeeProjectsClient.getEmployeeProjects(empId);
+        ResponseEntity<List<ProjectItem>> employeeProjectsResponse = employeeProjectsClient.getEmployeeProjectsFull(empId);
         if ( employeeProjectsResponse.getStatusCode() != HttpStatus.OK) {
             throw new IllegalStateException("Error retrieving EmployeeProject: HttpStatus = " + employeeProjectsResponse.getStatusCodeValue());
         }
