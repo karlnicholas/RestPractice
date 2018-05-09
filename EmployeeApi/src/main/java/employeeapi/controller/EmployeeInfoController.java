@@ -1,5 +1,8 @@
 package employeeapi.controller;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -11,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +47,16 @@ public class EmployeeInfoController {
     @Autowired
     private EmployeeDetailClient employeeDetailClient;
     
-    @GetMapping(produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PagedResources<SparseEmployeeDetailResource>> findAllBy(
+    @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResourceSupport> getApi() {
+        ResourceSupport resource = new ResourceSupport();
+        resource.add( linkTo(methodOn(EmployeeInfoController.class).listSparse(null, null)).withRel("list") );
+        resource.add( linkTo(methodOn(EmployeeInfoController.class).getEmployeeInfo(null)).withRel("empId"));
+        return ResponseEntity.ok(resource);
+    }
+    
+    @GetMapping(value="/list", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PagedResources<SparseEmployeeDetailResource>> listSparse(
         Pageable pageable, 
         PagedResourcesAssembler<SparseEmployeeDetailItem> pagedResourcesAssembler        
     ) {
@@ -63,7 +75,8 @@ public class EmployeeInfoController {
                 = employeeInfoService.getEmployeeDetail(empId);
             CompletableFuture<List<ProjectItem>> employeeProjectFuture 
                 = employeeInfoService.getEmployeeProjects(empId);
-/*            
+/*           
+            https://stackoverflow.com/questions/45490316/completablefuture-join-vs-get 
             CompletableFuture.allOf(
                     employeeAddressFuture,
                     employeeDetailFuture, 
