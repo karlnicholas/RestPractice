@@ -33,7 +33,7 @@ public class EmployeeInfoService {
         logger.debug("Async getting employeeAddress");
         ResponseEntity<EmployeeAddressItem> employeeAddressResponse = employeeAddressClient.getEmployeeAddress(empId);
         if ( employeeAddressResponse.getStatusCode() != HttpStatus.OK) {
-            throw new IllegalArgumentException("Error retrieving EmployeeAddress: HttpStatus = " + employeeAddressResponse.getStatusCodeValue());
+            throw new IllegalStateException("Error retrieving EmployeeAddress: HttpStatus = " + employeeAddressResponse.getStatusCodeValue());
         }
         return CompletableFuture.completedFuture(employeeAddressResponse.getBody());
     }
@@ -43,7 +43,7 @@ public class EmployeeInfoService {
         logger.debug("Async getting employeeDetail");
         ResponseEntity<EmployeeDetailItem> employeeDetailResponse = employeeDetailClient.getEmployeeDetail(empId);
         if ( employeeDetailResponse.getStatusCode() != HttpStatus.OK) {
-            throw new IllegalArgumentException("Error retrieving EmployeeDetail: HttpStatus = " + employeeDetailResponse.getStatusCodeValue());
+            throw new IllegalStateException("Error retrieving EmployeeDetail: HttpStatus = " + employeeDetailResponse.getStatusCodeValue());
         }
         return CompletableFuture.completedFuture(employeeDetailResponse.getBody());
     }
