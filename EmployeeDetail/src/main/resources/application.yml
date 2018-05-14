@@ -2,7 +2,7 @@ spring:
   application:
     name: EmployeeDetail
   jpa:
-    show-sql: false
+    show-sql: true
 server:
   port: ${PORT:0}
 logging:

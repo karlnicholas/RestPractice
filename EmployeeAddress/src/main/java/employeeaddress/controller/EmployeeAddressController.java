@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,25 +29,24 @@ public class EmployeeAddressController {
     }
     
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable("empId") Integer empId) {
+    public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable Integer empId) {
         logger.debug("EmployeeAddressController::getEmployeeAddress empId = " + empId);
         return ResponseEntity.ok(repository.getOne(empId).asEmployeeAddressItem());
     }
     
     @PostMapping(value="/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressItem> postEmployeeAddress(EmployeeAddressItem employeeAddressItem) {
-        return new ResponseEntity<>(repository.save(new EmployeeAddress(employeeAddressItem)).asEmployeeAddressItem(), HttpStatus.CREATED);
-    }
-
-    @PutMapping(value="/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressItem> putEmployeeAddress(EmployeeAddressItem employeeAddressItem) {
+    public ResponseEntity<EmployeeAddressItem> postEmployeeAddress(@RequestBody EmployeeAddressItem employeeAddressItem) {
         return ResponseEntity.ok(repository.save(new EmployeeAddress(employeeAddressItem)).asEmployeeAddressItem());
     }
 
-    @DeleteMapping(value="/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressItem> deleteEmployeeAddress(@PathVariable("empId") Integer empId) {
-        EmployeeAddress ed = repository.getOne(empId);
-        repository.delete(ed);        
-        return ResponseEntity.ok(ed.asEmployeeAddressItem());
+    @PutMapping(value="/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EmployeeAddressItem> putEmployeeAddress(@RequestBody EmployeeAddressItem employeeAddressItem) {
+        return ResponseEntity.ok(repository.save(new EmployeeAddress(employeeAddressItem)).asEmployeeAddressItem());
+    }
+
+    @DeleteMapping(value="/delete/{empId}")
+    public HttpStatus deleteEmployeeAddress(@PathVariable Integer empId) {
+        repository.deleteById(empId);        
+        return HttpStatus.OK;
     }
 }

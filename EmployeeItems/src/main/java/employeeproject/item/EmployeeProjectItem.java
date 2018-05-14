@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EmployeeProjectItem {
     private Integer empId;
-    private  Integer projectId;
+    private Integer projectId;
 
 }

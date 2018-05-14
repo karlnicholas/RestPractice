@@ -65,4 +65,29 @@ public class EmployeeDetail {
         this.roleDescription = roleDescription;
     }
 
+    // needed for test mocking
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((empId == null) ? 0 : empId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EmployeeDetail other = (EmployeeDetail) obj;
+        if (empId == null) {
+            if (other.empId != null)
+                return false;
+        } else if (!empId.equals(other.empId))
+            return false;
+        return true;
+    }
 }

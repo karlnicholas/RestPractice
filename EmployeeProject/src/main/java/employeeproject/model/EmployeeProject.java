@@ -34,5 +34,28 @@ public class EmployeeProject implements Serializable {
     public EmployeeProjectItem asEmployeeProjectItem() {
         return new EmployeeProjectItem( employeeProjectId.getEmpId(), employeeProjectId.getProjectId() ); 
     }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((employeeProjectId == null) ? 0 : employeeProjectId.hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EmployeeProject other = (EmployeeProject) obj;
+        if (employeeProjectId == null) {
+            if (other.employeeProjectId != null)
+                return false;
+        } else if (!employeeProjectId.equals(other.employeeProjectId))
+            return false;
+        return true;
+    }
 
 }

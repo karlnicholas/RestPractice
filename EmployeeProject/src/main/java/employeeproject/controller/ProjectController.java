@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,26 +35,25 @@ public class ProjectController {
     }
     
     @GetMapping(value="/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProjectItem> getProject(@PathVariable("projectId") Integer projectId) {
+    public ResponseEntity<ProjectItem> getProject(@PathVariable Integer projectId) {
         logger.info("get: " + projectId);
         return ResponseEntity.ok(projectPepository.getOne(projectId).asProjectItem());
     }
     
     @PostMapping(value="/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProjectItem> postEmployeeProject(ProjectItem projectItem) {
+    public ResponseEntity<ProjectItem> postEmployeeProject(@RequestBody ProjectItem projectItem) {
         return ResponseEntity.ok(projectPepository.save(new Project(projectItem)).asProjectItem());
     }
 
     @PutMapping(value="/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProjectItem> putEmployeeProject(ProjectItem employeeProjectItem) {
-        return ResponseEntity.ok(projectPepository.save(new Project(employeeProjectItem)).asProjectItem());
+    public ResponseEntity<ProjectItem> putEmployeeProject(@RequestBody ProjectItem projectItem) {
+        return ResponseEntity.ok(projectPepository.save(new Project(projectItem)).asProjectItem());
     }
 
     @DeleteMapping(value="/delete/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProjectItem> deleteEmployeeProject(@PathVariable("projectId") Integer projectId) {
-        Project project = projectPepository.getOne(projectId);
-        projectPepository.delete(project);        
-        return ResponseEntity.ok(project.asProjectItem());
+    public HttpStatus deleteEmployeeProject(@PathVariable Integer projectId) {
+        projectPepository.deleteById(projectId);
+        return HttpStatus.OK;
     }
     
 }

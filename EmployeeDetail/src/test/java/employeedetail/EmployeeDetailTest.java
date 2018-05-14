@@ -1,4 +1,4 @@
-package employeeaddress;
+package employeedetail;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.math.BigDecimal;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,19 +23,19 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import employeeaddress.controller.EmployeeAddressController;
-import employeeaddress.model.EmployeeAddress;
-import employeeaddress.service.EmployeeAddressRepository;
+import employeedetail.controller.EmployeeDetailController;
+import employeedetail.model.EmployeeDetail;
+import employeedetail.service.EmployeeDetailRepository;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(EmployeeAddressController.class)
-public class EmployeeAddressTest {
+@WebMvcTest(EmployeeDetailController.class)
+public class EmployeeDetailTest {
     
     @MockBean
-    private EmployeeAddressRepository repository;
+    private EmployeeDetailRepository repository;
     
     @Autowired
     private MockMvc mvc;
@@ -41,48 +43,44 @@ public class EmployeeAddressTest {
     @Autowired
     private ObjectMapper objectMapper;
     
-    private EmployeeAddress employeeAddress;
+    private EmployeeDetail employeeDetail;
     
     @Before
     public void setup() {
-        employeeAddress = new EmployeeAddress();
-        employeeAddress.setEmpId(1);
-        employeeAddress.setAddress1("Address 1");
-        employeeAddress.setAddress2("Address 2");
-        employeeAddress.setAddress3("Address 3");
-        employeeAddress.setAddress4("Address 4");
-        employeeAddress.setState("AZ");
-        employeeAddress.setCountry("US");
+        employeeDetail = new EmployeeDetail();
+        employeeDetail.setEmpId(1);
+        employeeDetail.setName("Karl");
+        employeeDetail.setRole("Technical Analyst");
+        employeeDetail.setRoleDescription("Analyze, Design, Code, and Deploy Enterprise Applications");
+        employeeDetail.setSalary(new BigDecimal("100000.00"));
     }
 
     @Test
     public void testGet() throws Exception {
-        given(this.repository.getOne(1)).willReturn(employeeAddress);
+        given(this.repository.getOne(1)).willReturn(employeeDetail);
 
         mvc.perform(
-                get("/employee/address/1")
+                get("/employee/detail/1")
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
 //            .andDo(print())    
             .andExpect(status().isOk())  
             .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
             .andExpect(jsonPath("$.empId", is(1)))    
-            .andExpect(jsonPath("$.address1", is("Address 1")))
-            .andExpect(jsonPath("$.address2", is("Address 2")))
-            .andExpect(jsonPath("$.address3", is("Address 3")))
-            .andExpect(jsonPath("$.address4", is("Address 4")))
-            .andExpect(jsonPath("$.state", is("AZ")))
-            .andExpect(jsonPath("$.country", is("US")))
+            .andExpect(jsonPath("$.name", is("Karl")))
+            .andExpect(jsonPath("$.role", is("Technical Analyst")))
+            .andExpect(jsonPath("$.roleDescription", is("Analyze, Design, Code, and Deploy Enterprise Applications")))
+            .andExpect(jsonPath("$.salary", is("100000.00")))
             .andReturn();
                   
     }
 
     @Test
     public void testPost() throws Exception {
-        given(this.repository.save(employeeAddress)).willReturn(employeeAddress);
-        String s = objectMapper.writeValueAsString(employeeAddress);
+        given(this.repository.save(employeeDetail)).willReturn(employeeDetail);
+        String s = objectMapper.writeValueAsString(employeeDetail.asEmployeeDetailItem());
         mvc.perform(
-                post("/employee/address/create")
+                post("/employee/detail/create")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(s)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -90,21 +88,19 @@ public class EmployeeAddressTest {
             .andExpect(status().isOk())  
             .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
             .andExpect(jsonPath("$.empId", is(1)))    
-            .andExpect(jsonPath("$.address1", is("Address 1")))
-            .andExpect(jsonPath("$.address2", is("Address 2")))
-            .andExpect(jsonPath("$.address3", is("Address 3")))
-            .andExpect(jsonPath("$.address4", is("Address 4")))
-            .andExpect(jsonPath("$.state", is("AZ")))
-            .andExpect(jsonPath("$.country", is("US")))
+            .andExpect(jsonPath("$.name", is("Karl")))
+            .andExpect(jsonPath("$.role", is("Technical Analyst")))
+            .andExpect(jsonPath("$.roleDescription", is("Analyze, Design, Code, and Deploy Enterprise Applications")))
+            .andExpect(jsonPath("$.salary", is("100000.00")))
             .andReturn();
                   
     }
     @Test
     public void testPut() throws Exception {
-        given(this.repository.save(employeeAddress)).willReturn(employeeAddress);
-        String s = objectMapper.writeValueAsString(employeeAddress);
+        given(this.repository.save(employeeDetail)).willReturn(employeeDetail);
+        String s = objectMapper.writeValueAsString(employeeDetail.asEmployeeDetailItem());
         mvc.perform(
-                put("/employee/address/update")
+                put("/employee/detail/update")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(s)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -112,12 +108,10 @@ public class EmployeeAddressTest {
             .andExpect(status().isOk())  
             .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
             .andExpect(jsonPath("$.empId", is(1)))    
-            .andExpect(jsonPath("$.address1", is("Address 1")))
-            .andExpect(jsonPath("$.address2", is("Address 2")))
-            .andExpect(jsonPath("$.address3", is("Address 3")))
-            .andExpect(jsonPath("$.address4", is("Address 4")))
-            .andExpect(jsonPath("$.state", is("AZ")))
-            .andExpect(jsonPath("$.country", is("US")))
+            .andExpect(jsonPath("$.name", is("Karl")))
+            .andExpect(jsonPath("$.role", is("Technical Analyst")))
+            .andExpect(jsonPath("$.roleDescription", is("Analyze, Design, Code, and Deploy Enterprise Applications")))
+            .andExpect(jsonPath("$.salary", is("100000.00")))
             .andReturn();
                   
     }
@@ -125,7 +119,7 @@ public class EmployeeAddressTest {
     @Test
     public void testDelete() throws Exception {
 
-        mvc.perform(delete("/employee/address/delete/1"))
+        mvc.perform(delete("/employee/detail/delete/1"))
 //            .andDo(print())    
             .andExpect(status().isOk())  
             .andReturn();
