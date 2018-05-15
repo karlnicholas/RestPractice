@@ -45,8 +45,8 @@ public class EmployeeAddressController {
     }
 
     @DeleteMapping(value="/delete/{empId}")
-    public HttpStatus deleteEmployeeAddress(@PathVariable Integer empId) {
+    public ResponseEntity<String> deleteEmployeeAddress(@PathVariable Integer empId) {
         repository.deleteById(empId);        
-        return HttpStatus.OK;
+        return ResponseEntity.ok(HttpStatus.OK.toString());
     }
 }

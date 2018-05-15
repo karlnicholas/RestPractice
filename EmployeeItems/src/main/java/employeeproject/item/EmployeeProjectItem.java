@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class EmployeeProjectItem {
     private Integer empId;
     private Integer projectId;
-
 }

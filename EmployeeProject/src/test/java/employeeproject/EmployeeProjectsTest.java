@@ -52,7 +52,6 @@ public class EmployeeProjectsTest {
     @Test
     public void testGet() throws Exception {
         given(this.repository.findAllByEmployeeProjectEmpId(1)).willReturn(employeeProjects);
-
         mvc.perform(
             get("/employee/projects/1")
             .accept(MediaType.APPLICATION_JSON_VALUE)

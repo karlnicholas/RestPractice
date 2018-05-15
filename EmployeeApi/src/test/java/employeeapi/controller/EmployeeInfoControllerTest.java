@@ -75,10 +75,6 @@ public class EmployeeInfoControllerTest {
         employeeAddressItem.setAddress4("Address 4");
         employeeAddressItem.setState("AZ");
         employeeAddressItem.setCountry("US");
-        when(employeeAddressClient.getEmployeeAddress(1)).thenReturn(ResponseEntity.ok(employeeAddressItem));
-        when(employeeAddressClient.deleteEmployeeAddress(1)).thenReturn(ResponseEntity.ok(employeeAddressItem));
-        when(employeeAddressClient.postEmployeeAddress(employeeAddressItem)).thenReturn(ResponseEntity.ok(employeeAddressItem));
-        when(employeeAddressClient.putEmployeeAddress(employeeAddressItem)).thenReturn(ResponseEntity.ok(employeeAddressItem));
         //
         employeeDetailItem = new EmployeeDetailItem();
         employeeDetailItem.setEmpId(1);
@@ -89,29 +85,20 @@ public class EmployeeInfoControllerTest {
 //        sparseEmployeeDetailItem = new SparseEmployeeDetailItem(1, "Karl");
         sparseEmployeeDetailItems = Page.empty();
 //        sparseEmployeeDetailItems.add(sparseEmployeeDetailItem);
-        when(employeeDetailClient.getEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
-        when(employeeDetailClient.deleteEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
-        when(employeeDetailClient.postEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));
-        when(employeeDetailClient.putEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));
-        when(employeeDetailClient.findAllBy(PageRequest.of(0, 20))).thenReturn(ResponseEntity.ok(sparseEmployeeDetailItems));
         //
         employeeProjectItems = new ArrayList<>();
         employeeProjectItem = new EmployeeProjectItem();
         employeeProjectItem.setEmpId(1);
         employeeProjectItem.setProjectId(1);
         employeeProjectItems.add(employeeProjectItem);
-        when(employeeProjectClient.getEmployeeProjects(1)).thenReturn(ResponseEntity.ok(employeeProjectItems));
-        when(employeeProjectClient.deleteEmployeeProject(1, 1)).thenReturn(ResponseEntity.ok(employeeProjectItem));
-        when(employeeProjectClient.postEmployeeProject(employeeProjectItem)).thenReturn(ResponseEntity.ok(employeeProjectItem));
-        when(employeeProjectClient.putEmployeeProject(employeeProjectItem)).thenReturn(ResponseEntity.ok(employeeProjectItem));
         
     }
 
     @Test
     public void testEmployee() throws Exception {
-//        Arrays.asList(
-//                new Employee(1L,"Frodo", "Baggins", "ring bearer"),
-//                new Employee(2L,"Bilbo", "Baggins", "burglar")));
+        when(employeeAddressClient.getEmployeeAddress(1)).thenReturn(ResponseEntity.ok(employeeAddressItem));
+        when(employeeDetailClient.getEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
+        when(employeeProjectClient.getEmployeeProjects(1)).thenReturn(ResponseEntity.ok(employeeProjectItems));
 
         mvc.perform(get("/employee/info/1").accept(MediaType.APPLICATION_JSON_VALUE))
             .andDo(print())    
@@ -152,7 +139,7 @@ public class EmployeeInfoControllerTest {
 
     @Test
     public void testEmployeeList() throws Exception {
-
+        when(employeeDetailClient.findAllBy(PageRequest.of(0, 20))).thenReturn(ResponseEntity.ok(sparseEmployeeDetailItems));
         mvc.perform(get("/employee/info?page=0&size=20").accept(MediaType.APPLICATION_JSON_VALUE))
             .andDo(print())    
             .andExpect(status().isOk())

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -55,23 +56,23 @@ public class ProjectController {
     }
 
     @GetMapping(value="/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProjectResource> getProject(@PathVariable("projectId") Integer projectId ) {
+    public ResponseEntity<ProjectResource> getProject(@PathVariable Integer projectId ) {
         return ResponseEntity.ok(assembler.toResource(projectClient.getProject(projectId).getBody()));    
     }
 
     @PostMapping(value="/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProjectResource> postProject(ProjectItem projectItem) {
+    public ResponseEntity<ProjectResource> postProject(@RequestBody ProjectItem projectItem) {
         return ResponseEntity.ok( assembler.toResource(projectClient.postProject(projectItem).getBody()) );
     }
 
     @PutMapping(value="/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProjectResource> putProject(ProjectItem projectItem) {
+    public ResponseEntity<ProjectResource> putProject(@RequestBody ProjectItem projectItem) {
         return ResponseEntity.ok( assembler.toResource(projectClient.putProject(projectItem).getBody()) );
     }
 
     @DeleteMapping(value="/delete/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProjectResource> deleteProject(@PathVariable("projectId") Integer projectId) {
-        return ResponseEntity.ok( assembler.toResource(projectClient.deleteProject(projectId).getBody()) );
+    public HttpStatus deleteProject(@PathVariable Integer projectId) {
+        return projectClient.deleteProject(projectId);
     }
 
     @FeignClient(name="EmployeeProject")
@@ -80,15 +81,15 @@ public class ProjectController {
         public ResponseEntity<Page<ProjectItem>> getProjects(Pageable pageable);
 
         @GetMapping(value="/project/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ProjectItem> getProject(@PathVariable("projectId") Integer projectId);
+        public ResponseEntity<ProjectItem> getProject(@PathVariable Integer projectId);
         
         @PostMapping(value="/project/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ProjectItem> postProject(ProjectItem projectItem);
+        public ResponseEntity<ProjectItem> postProject(@RequestBody ProjectItem projectItem);
 
         @PutMapping(value="/project/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ProjectItem> putProject(ProjectItem projectItem);
+        public ResponseEntity<ProjectItem> putProject(@RequestBody ProjectItem projectItem);
 
         @DeleteMapping(value="/project/delete/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ProjectItem> deleteProject(@PathVariable("projectId") Integer projectId);
+        public HttpStatus deleteProject(@PathVariable Integer projectId);
     }    
 }

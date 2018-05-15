@@ -51,9 +51,9 @@ public class ProjectController {
     }
 
     @DeleteMapping(value="/delete/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus deleteEmployeeProject(@PathVariable Integer projectId) {
+    public ResponseEntity<String> deleteEmployeeProject(@PathVariable Integer projectId) {
         projectPepository.deleteById(projectId);
-        return HttpStatus.OK;
+        return ResponseEntity.ok(HttpStatus.OK.toString());
     }
     
 }

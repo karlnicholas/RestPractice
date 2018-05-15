@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,7 +46,7 @@ public class EmployeeProjectController {
     }
 
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Resources<EmployeeProjectResource>> getEmployeeProjects(@PathVariable("empId") Integer empId ) {
+    public ResponseEntity<Resources<EmployeeProjectResource>> getEmployeeProjects(@PathVariable Integer empId ) {
         Link linkSelf = linkTo(methodOn(EmployeeProjectController.class).getEmployeeProjects(empId)).slash('/').withSelfRel();
         Link linkCreate = linkTo(methodOn(EmployeeProjectController.class).postEmployeeProject(null)).withRel("create");
 
@@ -61,32 +62,32 @@ public class EmployeeProjectController {
     }
 
     @PostMapping(value="/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeProjectResource> postEmployeeProject(EmployeeProjectItem employeeProjectItem) {
+    public ResponseEntity<EmployeeProjectResource> postEmployeeProject(@RequestBody EmployeeProjectItem employeeProjectItem) {
         return ResponseEntity.ok( assembler.toResource(employeeProjectClient.postEmployeeProject(employeeProjectItem).getBody()) );
     }
 
     @PutMapping(value="/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeProjectResource> putEmployeeProject(EmployeeProjectItem employeeProjectItem) {
+    public ResponseEntity<EmployeeProjectResource> putEmployeeProject(@RequestBody EmployeeProjectItem employeeProjectItem) {
         return ResponseEntity.ok( assembler.toResource(employeeProjectClient.putEmployeeProject(employeeProjectItem).getBody()) );
     }
 
     @DeleteMapping(value="/delete/{empId}/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeProjectResource> deleteEmployeeProject(@PathVariable("empId") Integer empId, @PathVariable("projectId") Integer projectId) {
-        return ResponseEntity.ok( assembler.toResource(employeeProjectClient.deleteEmployeeProject(empId, projectId).getBody()) );
+    public ResponseEntity<String> deleteEmployeeProject(@PathVariable Integer empId, @PathVariable Integer projectId) {
+        return ResponseEntity.ok( employeeProjectClient.deleteEmployeeProject(empId, projectId).getBody() );
     }
 
     @FeignClient(name="EmployeeProject")
     public interface EmployeeProjectClient {
         @GetMapping(value="/employee/project/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<List<EmployeeProjectItem>> getEmployeeProjects(@PathVariable("empId") Integer empId);
+        public ResponseEntity<List<EmployeeProjectItem>> getEmployeeProjects(@PathVariable Integer empId);
         
         @PostMapping(value="/employee/project/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeProjectItem> postEmployeeProject(EmployeeProjectItem employeeProjectItem);
+        public ResponseEntity<EmployeeProjectItem> postEmployeeProject(@RequestBody EmployeeProjectItem employeeProjectItem);
 
         @PutMapping(value="/employee/project/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeProjectItem> putEmployeeProject(EmployeeProjectItem employeeProjectItem);
+        public ResponseEntity<EmployeeProjectItem> putEmployeeProject(@RequestBody EmployeeProjectItem employeeProjectItem);
 
         @DeleteMapping(value="/employee/project/delete/{empId}/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeProjectItem> deleteEmployeeProject(@PathVariable("empId") Integer empId, @PathVariable("projectId") Integer projectId);
+        public ResponseEntity<String> deleteEmployeeProject(@PathVariable Integer empId, @PathVariable Integer projectId);
     }    
 }

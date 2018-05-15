@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,23 +40,23 @@ public class EmployeeAddressController {
     }
     
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressResource> getEmployeeAddress(@PathVariable("empId") Integer empId) {
+    public ResponseEntity<EmployeeAddressResource> getEmployeeAddress(@PathVariable Integer empId) {
         return ResponseEntity.ok( assembler.toResource(employeeAddressClient.getEmployeeAddress(empId).getBody()) );
     }
     
     @PostMapping(value="/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressResource> postEmployeeAddress(EmployeeAddressItem employeeAddressItem) {
+    public ResponseEntity<EmployeeAddressResource> postEmployeeAddress(@RequestBody EmployeeAddressItem employeeAddressItem) {
         return ResponseEntity.ok( assembler.toResource(employeeAddressClient.postEmployeeAddress(employeeAddressItem).getBody()) );
     }
 
     @PutMapping(value="/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressResource> putEmployeeAddress(EmployeeAddressItem employeeAddressItem) {
+    public ResponseEntity<EmployeeAddressResource> putEmployeeAddress(@RequestBody EmployeeAddressItem employeeAddressItem) {
         return ResponseEntity.ok( assembler.toResource(employeeAddressClient.putEmployeeAddress(employeeAddressItem).getBody()) );
     }
 
-    @DeleteMapping(value="/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmployeeAddressResource> deleteEmployeeAddress(@PathVariable("empId") Integer empId) {
-        return ResponseEntity.ok( assembler.toResource(employeeAddressClient.deleteEmployeeAddress(empId).getBody()) );
+    @DeleteMapping(value="/delete/{empId}")
+    public ResponseEntity<String> deleteEmployeeAddress(@PathVariable Integer empId) {
+        return ResponseEntity.ok( employeeAddressClient.deleteEmployeeAddress(empId).getBody() );
     }
     
     // use a feign client to access the EmployeeAddress server so that it "loadbalances".
@@ -64,14 +65,14 @@ public class EmployeeAddressController {
     @FeignClient(name="EmployeeAddress")
     public interface EmployeeAddressClient {
         @GetMapping(value="/employee/address/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable("empId") Integer empId);
+        public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable Integer empId);
         
         @PostMapping(value="/employee/address/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeAddressItem> postEmployeeAddress(EmployeeAddressItem employeeAddressItem);
+        public ResponseEntity<EmployeeAddressItem> postEmployeeAddress(@RequestBody EmployeeAddressItem employeeAddressItem);
 
         @PutMapping(value="/employee/address/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeAddressItem> putEmployeeAddress(EmployeeAddressItem employeeAddressItem);
+        public ResponseEntity<EmployeeAddressItem> putEmployeeAddress(@RequestBody EmployeeAddressItem employeeAddressItem);
 
-        @DeleteMapping(value="/employee/address/delete/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeAddressItem> deleteEmployeeAddress(@PathVariable("empId") Integer empId);
+        @DeleteMapping(value="/employee/address/delete/{empId}")
+        public ResponseEntity<String> deleteEmployeeAddress(@PathVariable Integer empId);
     }}

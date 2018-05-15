@@ -1,8 +1,10 @@
 package employeeaddress.item;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(of={"empId"})
 public class EmployeeAddressItem {
     private Integer empId;
     private String address1;

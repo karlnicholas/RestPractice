@@ -62,12 +62,12 @@ public class EmployeeProjectController {
     }
 
     @DeleteMapping(value="/delete/{empId}/{projectId}")
-    public HttpStatus deleteEmployeeProject(
+    public ResponseEntity<String> deleteEmployeeProject(
         @PathVariable Integer empId, 
         @PathVariable Integer projectId
     ) {
         repository.deleteById(new EmployeeProjectId(empId, projectId));        
-        return HttpStatus.OK;
+        return ResponseEntity.ok(HttpStatus.OK.toString());
     }
     
 }

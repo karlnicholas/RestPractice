@@ -21,9 +21,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import employeeaddress.item.EmployeeAddressItem;
-import employeeapi.controller.EmployeeAddressController.EmployeeAddressClient;
-import employeeapi.resource.EmployeeAddressResourceAssembler;
+import employeeapi.controller.EmployeeDetailController.EmployeeDetailClient;
+import employeeapi.resource.EmployeeDetailResourceAssembler;
+import employeedetail.item.EmployeeDetailItem;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -33,32 +33,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
+
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(EmployeeAddressController.class)
-@Import(EmployeeAddressResourceAssembler.class)
-public class EmployeeAddressControllerTest {
+@WebMvcTest(EmployeeDetailController.class)
+@Import(EmployeeDetailResourceAssembler.class)
+public class EmployeeDetailControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mvc;
     @MockBean
     // mock the FeignClient
-    private EmployeeAddressClient employeeAddressClient;
-    private EmployeeAddressItem employeeAddressItem;
-    private String employeeAddressItemJSON;
+    private EmployeeDetailClient employeeDetailClient;
+    private EmployeeDetailItem employeeDetailItem;
+    private String employeeDetailItemJSON;
 
     @Before
     public void setup() throws JsonProcessingException {
-        employeeAddressItem = new EmployeeAddressItem();
-        employeeAddressItem.setEmpId(1);
-        employeeAddressItem.setAddress1("Address 1");
-        employeeAddressItem.setAddress2("Address 2");
-        employeeAddressItem.setAddress3("Address 3");
-        employeeAddressItem.setAddress4("Address 4");
-        employeeAddressItem.setState("AZ");
-        employeeAddressItem.setCountry("US");
-        employeeAddressItemJSON = objectMapper.writeValueAsString(employeeAddressItem);
+        employeeDetailItem = new EmployeeDetailItem();
+        employeeDetailItem.setEmpId(1);
+        employeeDetailItem.setName("Karl");
+        employeeDetailItem.setSalary(new BigDecimal("100000.00"));
+        employeeDetailItem.setRole("Technical Analyst");
+        employeeDetailItem.setRoleDescription("Analyze Technicals");
+        employeeDetailItemJSON = objectMapper.writeValueAsString(employeeDetailItem);
     }
 
     private void testPackage(ResultActions r) throws Exception {
@@ -66,33 +66,31 @@ public class EmployeeAddressControllerTest {
         .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
 //      .andDo(print())    
         .andExpect(jsonPath("$.empId", is(1)))    
-        .andExpect(jsonPath("$.address1", is("Address 1")))
-        .andExpect(jsonPath("$.address2", is("Address 2")))
-        .andExpect(jsonPath("$.address3", is("Address 3")))
-        .andExpect(jsonPath("$.address4", is("Address 4")))
-        .andExpect(jsonPath("$.state", is("AZ")))
-        .andExpect(jsonPath("$.country", is("US")))
-        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/address/1")))
-        .andExpect(jsonPath("$._links.delete.href", is("http://localhost/employee/address/delete/1")))
-        .andExpect(jsonPath("$._links.update.href", is("http://localhost/employee/address/update")))
-        .andExpect(jsonPath("$._links.create.href", is("http://localhost/employee/address/create")));
+        .andExpect(jsonPath("$.name", is("Karl")))
+        .andExpect(jsonPath("$.salary", is("100000.00")))
+        .andExpect(jsonPath("$.role", is("Technical Analyst")))
+        .andExpect(jsonPath("$.roleDescription", is("Analyze Technicals")))
+        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/detail/1")))
+        .andExpect(jsonPath("$._links.delete.href", is("http://localhost/employee/detail/delete/1")))
+        .andExpect(jsonPath("$._links.update.href", is("http://localhost/employee/detail/update")))
+        .andExpect(jsonPath("$._links.create.href", is("http://localhost/employee/detail/create")));
     }
 
     @Test
     public void testGet() throws Exception {
-        when(employeeAddressClient.getEmployeeAddress(1)).thenReturn(ResponseEntity.ok(employeeAddressItem));
+        when(employeeDetailClient.getEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         testPackage(
-            mvc.perform(get("/employee/address/1").accept(MediaType.APPLICATION_JSON_VALUE))
+            mvc.perform(get("/employee/detail/1").accept(MediaType.APPLICATION_JSON_VALUE))
         );
     }
 
     @Test
     public void testCreate() throws Exception {
-        when(employeeAddressClient.postEmployeeAddress(employeeAddressItem)).thenReturn(ResponseEntity.ok(employeeAddressItem));
+        when(employeeDetailClient.postEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         testPackage(
-            mvc.perform(post("/employee/address/create")
+            mvc.perform(post("/employee/detail/create")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(employeeAddressItemJSON)
+                .content(employeeDetailItemJSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
         );
@@ -100,11 +98,11 @@ public class EmployeeAddressControllerTest {
 
     @Test
     public void testUpdate() throws Exception {
-        when(employeeAddressClient.putEmployeeAddress(employeeAddressItem)).thenReturn(ResponseEntity.ok(employeeAddressItem));
+        when(employeeDetailClient.putEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         testPackage(
-            mvc.perform(put("/employee/address/update")
+            mvc.perform(put("/employee/detail/update")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(employeeAddressItemJSON)
+                .content(employeeDetailItemJSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
         );
@@ -112,8 +110,8 @@ public class EmployeeAddressControllerTest {
 
     @Test
     public void testDlete() throws Exception {
-        when(employeeAddressClient.deleteEmployeeAddress(1)).thenReturn(ResponseEntity.ok(HttpStatus.OK.toString()));
-        mvc.perform(delete("/employee/address/delete/1"))
+        when(employeeDetailClient.deleteEmployeeDetail(1)).thenReturn(ResponseEntity.ok(HttpStatus.OK.toString()));
+        mvc.perform(delete("/employee/detail/delete/1"))
 //      .andDo(print())    
         .andExpect(status().isOk())
         .andReturn();

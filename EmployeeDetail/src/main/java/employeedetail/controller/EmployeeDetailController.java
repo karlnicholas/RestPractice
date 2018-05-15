@@ -59,8 +59,8 @@ public class EmployeeDetailController {
     }
 
     @DeleteMapping(value="/delete/{empId}")
-    public HttpStatus deleteEmployeeDetail(@PathVariable Integer empId) {
+    public ResponseEntity<String> deleteEmployeeDetail(@PathVariable Integer empId) {
         repository.deleteById(empId);        
-        return HttpStatus.OK;
+        return ResponseEntity.ok(HttpStatus.OK.toString());
     }
 }
