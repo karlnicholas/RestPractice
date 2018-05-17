@@ -44,9 +44,9 @@ public class EmployeeAddressController {
         return ResponseEntity.ok(repository.save(new EmployeeAddress(employeeAddressItem)).asEmployeeAddressItem());
     }
 
-    @DeleteMapping(value="/delete/{empId}")
+    @DeleteMapping(value="/delete/{empId}", produces=MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> deleteEmployeeAddress(@PathVariable Integer empId) {
         repository.deleteById(empId);        
-        return ResponseEntity.ok(HttpStatus.OK.toString());
+        return ResponseEntity.ok(HttpStatus.OK.name());
     }
 }

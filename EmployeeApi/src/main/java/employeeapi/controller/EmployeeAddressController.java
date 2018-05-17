@@ -54,7 +54,7 @@ public class EmployeeAddressController {
         return ResponseEntity.ok( assembler.toResource(employeeAddressClient.putEmployeeAddress(employeeAddressItem).getBody()) );
     }
 
-    @DeleteMapping(value="/delete/{empId}")
+    @DeleteMapping(value="/delete/{empId}", produces=MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> deleteEmployeeAddress(@PathVariable Integer empId) {
         return ResponseEntity.ok( employeeAddressClient.deleteEmployeeAddress(empId).getBody() );
     }
@@ -65,7 +65,7 @@ public class EmployeeAddressController {
     @FeignClient(name="EmployeeAddress")
     public interface EmployeeAddressClient {
         @GetMapping(value="/employee/address/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable Integer empId);
+        public ResponseEntity<EmployeeAddressItem> getEmployeeAddress(@PathVariable("empId") Integer empId);
         
         @PostMapping(value="/employee/address/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeAddressItem> postEmployeeAddress(@RequestBody EmployeeAddressItem employeeAddressItem);
@@ -73,6 +73,6 @@ public class EmployeeAddressController {
         @PutMapping(value="/employee/address/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeAddressItem> putEmployeeAddress(@RequestBody EmployeeAddressItem employeeAddressItem);
 
-        @DeleteMapping(value="/employee/address/delete/{empId}")
-        public ResponseEntity<String> deleteEmployeeAddress(@PathVariable Integer empId);
+        @DeleteMapping(value="/employee/address/delete/{empId}", produces=MediaType.TEXT_PLAIN_VALUE)
+        public ResponseEntity<String> deleteEmployeeAddress(@PathVariable("empId") Integer empId);
     }}

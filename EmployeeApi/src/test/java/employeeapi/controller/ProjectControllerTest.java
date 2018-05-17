@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,9 +23,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import employeeapi.controller.EmployeeDetailController.EmployeeDetailClient;
-import employeeapi.resource.EmployeeDetailResourceAssembler;
-import employeedetail.item.EmployeeDetailItem;
+import employeeapi.controller.ProjectController.ProjectClient;
+import employeeapi.resource.ProjectResourceAssembler;
+import project.item.ProjectItem;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -34,64 +36,72 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(EmployeeDetailController.class)
-@Import(EmployeeDetailResourceAssembler.class)
-public class EmployeeDetailControllerTest {
+@WebMvcTest(ProjectController.class)
+@Import(ProjectResourceAssembler.class)
+public class ProjectControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mvc;
     @MockBean
     // mock the FeignClient
-    private EmployeeDetailClient employeeDetailClient;
-    private EmployeeDetailItem employeeDetailItem;
-    private String employeeDetailItemJSON;
+    private ProjectClient projectClient;
+    private ProjectItem projectItem;
+    private Page<ProjectItem> projectItems;
+    private String projectItemJSON;
 
     @Before
     public void setup() throws JsonProcessingException {
-        employeeDetailItem = new EmployeeDetailItem();
-        employeeDetailItem.setEmpId(1);
-        employeeDetailItem.setName("Karl");
-        employeeDetailItem.setSalary(new BigDecimal("100000.00"));
-        employeeDetailItem.setRole("Technical Analyst");
-        employeeDetailItem.setRoleDescription("Analyze Technicals");
-        employeeDetailItemJSON = objectMapper.writeValueAsString(employeeDetailItem);
+        projectItem = new ProjectItem(1, "Test Project", "Test Techstack");
+        projectItemJSON = objectMapper.writeValueAsString(projectItem);
+        List<ProjectItem> listProjectItems = new ArrayList<>();
+        listProjectItems.add(projectItem);
+        projectItems = new PageImpl<>(listProjectItems);
     }
 
     private void testPackage(ResultActions r) throws Exception {
         r.andExpect(status().isOk())
         .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
 //      .andDo(print())    
-        .andExpect(jsonPath("$.empId", is(1)))    
-        .andExpect(jsonPath("$.name", is("Karl")))
-        .andExpect(jsonPath("$.salary", is("100000.00")))
-        .andExpect(jsonPath("$.role", is("Technical Analyst")))
-        .andExpect(jsonPath("$.roleDescription", is("Analyze Technicals")))
-        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/detail/1")))
-        .andExpect(jsonPath("$._links.delete.href", is("http://localhost/employee/detail/delete/1")))
-        .andExpect(jsonPath("$._links.update.href", is("http://localhost/employee/detail/update")))
-        .andExpect(jsonPath("$._links.create.href", is("http://localhost/employee/detail/create")));
+        .andExpect(jsonPath("$.projectId", is(1)))    
+        .andExpect(jsonPath("$.projectName", is("Test Project")))    
+        .andExpect(jsonPath("$.techstack", is("Test Techstack")))    
+        .andExpect(jsonPath("$._links.self.href", is("http://localhost/project/1")))
+        .andExpect(jsonPath("$._links.delete.href", is("http://localhost/project/delete/1")));
     }
-
+/*
     @Test
     public void testGet() throws Exception {
-        when(employeeDetailClient.getEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
+        when(projectClient.getProjects(null)).thenReturn(ResponseEntity.ok(projectItems));
+        mvc.perform(get("/project/projects").accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
+        .andExpect(jsonPath("$._embedded.projectResourceList[0].projectId", is(1)))
+        .andExpect(jsonPath("$._embedded.projectResourceList[0]._links.delete.href", is("http://localhost/project/delete/1/1")))
+        .andExpect(jsonPath("$._links.self.href", is("http://localhost/project/1")))
+        .andExpect(jsonPath("$._links.create.href", is("http://localhost/project/create")));
+    }
+*/
+    @Test
+    public void testGetProject() throws Exception {
+        when(projectClient.getProject(1)).thenReturn(ResponseEntity.ok(projectItem));
         testPackage(
-            mvc.perform(get("/employee/detail/1").accept(MediaType.APPLICATION_JSON_VALUE))
+            mvc.perform(get("/project/1").accept(MediaType.APPLICATION_JSON_VALUE))
         );
     }
 
     @Test
     public void testCreate() throws Exception {
-        when(employeeDetailClient.postEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));
+        when(projectClient.postProject(projectItem)).thenReturn(ResponseEntity.ok(projectItem));
         testPackage(
-            mvc.perform(post("/employee/detail/create")
+            mvc.perform(post("/project/create")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(employeeDetailItemJSON)
+                .content(projectItemJSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
         );
@@ -99,11 +109,11 @@ public class EmployeeDetailControllerTest {
 
     @Test
     public void testUpdate() throws Exception {
-        when(employeeDetailClient.putEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));
+        when(projectClient.putProject(projectItem)).thenReturn(ResponseEntity.ok(projectItem));
         testPackage(
-            mvc.perform(put("/employee/detail/update")
+            mvc.perform(put("/project/update")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(employeeDetailItemJSON)
+                .content(projectItemJSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
         );
@@ -111,8 +121,8 @@ public class EmployeeDetailControllerTest {
 
     @Test
     public void testDlete() throws Exception {
-        when(employeeDetailClient.deleteEmployeeDetail(1)).thenReturn(ResponseEntity.ok(HttpStatus.OK.name()));
-        mvc.perform(delete("/employee/detail/delete/1"))
+        when(projectClient.deleteProject(1)).thenReturn(ResponseEntity.ok(HttpStatus.OK.name()));
+        mvc.perform(delete("/project/delete/1"))
 //      .andDo(print())    
         .andExpect(status().isOk())
         .andExpect(content().string("OK"));    

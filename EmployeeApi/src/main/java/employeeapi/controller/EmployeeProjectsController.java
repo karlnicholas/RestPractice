@@ -40,13 +40,12 @@ public class EmployeeProjectsController {
     }
 
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Resources<ProjectResource>> getEmployeeProjects(@PathVariable("empId") Integer empId ) {
+    public ResponseEntity<Resources<ProjectResource>> getEmployeeProjects(@PathVariable Integer empId ) {
         Link linkSelf = linkTo(methodOn(EmployeeProjectsController.class).getEmployeeProjects(empId)).withSelfRel();
         return new ResponseEntity<Resources<ProjectResource>>(new Resources<ProjectResource>(
-                Lists.transform(employeeProjectsClient.getEmployeeProjectsFull(empId).getBody(), item -> assembler.toResource(item)), 
-                linkSelf), 
-            HttpStatus.OK
-        );
+                Lists.transform(employeeProjectsClient.getEmployeeProjectsFull(empId).getBody(),
+                        item -> assembler.toResource(item)),
+                linkSelf), HttpStatus.OK);
     }
 
     @FeignClient(name="EmployeeProject")

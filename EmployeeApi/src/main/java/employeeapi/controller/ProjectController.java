@@ -70,9 +70,9 @@ public class ProjectController {
         return ResponseEntity.ok( assembler.toResource(projectClient.putProject(projectItem).getBody()) );
     }
 
-    @DeleteMapping(value="/delete/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus deleteProject(@PathVariable Integer projectId) {
-        return projectClient.deleteProject(projectId);
+    @DeleteMapping(value="/delete/{projectId}", produces=MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> deleteProject(@PathVariable Integer projectId) {
+        return ResponseEntity.ok( projectClient.deleteProject(projectId).getBody() );
     }
 
     @FeignClient(name="EmployeeProject")
@@ -81,7 +81,7 @@ public class ProjectController {
         public ResponseEntity<Page<ProjectItem>> getProjects(Pageable pageable);
 
         @GetMapping(value="/project/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ProjectItem> getProject(@PathVariable Integer projectId);
+        public ResponseEntity<ProjectItem> getProject(@PathVariable("projectId") Integer projectId);
         
         @PostMapping(value="/project/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<ProjectItem> postProject(@RequestBody ProjectItem projectItem);
@@ -89,7 +89,7 @@ public class ProjectController {
         @PutMapping(value="/project/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<ProjectItem> putProject(@RequestBody ProjectItem projectItem);
 
-        @DeleteMapping(value="/project/delete/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public HttpStatus deleteProject(@PathVariable Integer projectId);
+        @DeleteMapping(value="/project/delete/{projectId}", produces=MediaType.TEXT_PLAIN_VALUE)
+        public ResponseEntity<String> deleteProject(@PathVariable("projectId") Integer projectId);
     }    
 }

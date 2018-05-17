@@ -58,9 +58,9 @@ public class EmployeeDetailController {
         );
     }
 
-    @DeleteMapping(value="/delete/{empId}")
+    @DeleteMapping(value="/delete/{empId}", produces=MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> deleteEmployeeDetail(@PathVariable Integer empId) {
         repository.deleteById(empId);        
-        return ResponseEntity.ok(HttpStatus.OK.toString());
+        return ResponseEntity.ok(HttpStatus.OK.name());
     }
 }

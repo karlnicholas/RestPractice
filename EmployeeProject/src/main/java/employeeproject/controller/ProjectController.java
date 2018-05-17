@@ -50,10 +50,10 @@ public class ProjectController {
         return ResponseEntity.ok(projectPepository.save(new Project(projectItem)).asProjectItem());
     }
 
-    @DeleteMapping(value="/delete/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value="/delete/{projectId}", produces=MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> deleteEmployeeProject(@PathVariable Integer projectId) {
         projectPepository.deleteById(projectId);
-        return ResponseEntity.ok(HttpStatus.OK.toString());
+        return ResponseEntity.ok(HttpStatus.OK.name());
     }
     
 }

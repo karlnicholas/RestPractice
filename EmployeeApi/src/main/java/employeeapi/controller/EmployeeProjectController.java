@@ -71,7 +71,7 @@ public class EmployeeProjectController {
         return ResponseEntity.ok( assembler.toResource(employeeProjectClient.putEmployeeProject(employeeProjectItem).getBody()) );
     }
 
-    @DeleteMapping(value="/delete/{empId}/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value="/delete/{empId}/{projectId}", produces=MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> deleteEmployeeProject(@PathVariable Integer empId, @PathVariable Integer projectId) {
         return ResponseEntity.ok( employeeProjectClient.deleteEmployeeProject(empId, projectId).getBody() );
     }
@@ -79,7 +79,7 @@ public class EmployeeProjectController {
     @FeignClient(name="EmployeeProject")
     public interface EmployeeProjectClient {
         @GetMapping(value="/employee/project/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<List<EmployeeProjectItem>> getEmployeeProjects(@PathVariable Integer empId);
+        public ResponseEntity<List<EmployeeProjectItem>> getEmployeeProjects(@PathVariable("empId") Integer empId);
         
         @PostMapping(value="/employee/project/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeProjectItem> postEmployeeProject(@RequestBody EmployeeProjectItem employeeProjectItem);
@@ -87,7 +87,7 @@ public class EmployeeProjectController {
         @PutMapping(value="/employee/project/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<EmployeeProjectItem> putEmployeeProject(@RequestBody EmployeeProjectItem employeeProjectItem);
 
-        @DeleteMapping(value="/employee/project/delete/{empId}/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<String> deleteEmployeeProject(@PathVariable Integer empId, @PathVariable Integer projectId);
+        @DeleteMapping(value="/employee/project/delete/{empId}/{projectId}", produces=MediaType.TEXT_PLAIN_VALUE)
+        public ResponseEntity<String> deleteEmployeeProject(@PathVariable("empId") Integer empId, @PathVariable("projectId") Integer projectId);
     }    
 }

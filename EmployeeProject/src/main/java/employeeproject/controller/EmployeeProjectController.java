@@ -61,13 +61,13 @@ public class EmployeeProjectController {
             );
     }
 
-    @DeleteMapping(value="/delete/{empId}/{projectId}")
+    @DeleteMapping(value="/delete/{empId}/{projectId}", produces=MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> deleteEmployeeProject(
         @PathVariable Integer empId, 
         @PathVariable Integer projectId
     ) {
         repository.deleteById(new EmployeeProjectId(empId, projectId));        
-        return ResponseEntity.ok(HttpStatus.OK.toString());
+        return ResponseEntity.ok(HttpStatus.OK.name());
     }
     
 }

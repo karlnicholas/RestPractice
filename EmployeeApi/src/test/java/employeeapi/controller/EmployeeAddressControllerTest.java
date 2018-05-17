@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -112,10 +113,10 @@ public class EmployeeAddressControllerTest {
 
     @Test
     public void testDlete() throws Exception {
-        when(employeeAddressClient.deleteEmployeeAddress(1)).thenReturn(ResponseEntity.ok(HttpStatus.OK.toString()));
+        when(employeeAddressClient.deleteEmployeeAddress(1)).thenReturn(ResponseEntity.ok(HttpStatus.OK.name()));
         mvc.perform(delete("/employee/address/delete/1"))
 //      .andDo(print())    
         .andExpect(status().isOk())
-        .andReturn();
+        .andExpect(content().string("OK"));    
     }    
 }
