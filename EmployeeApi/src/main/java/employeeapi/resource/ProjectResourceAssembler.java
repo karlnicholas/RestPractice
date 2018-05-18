@@ -26,6 +26,8 @@ public class ProjectResourceAssembler
         ProjectResource resource = createResourceWithId(item.getProjectId(), item);                
         resource.fromProjectItem(item);
         // … do further mapping
+        resource.add(linkTo(methodOn(ProjectController.class).postProject(item)).withRel("create"));
+        resource.add(linkTo(methodOn(ProjectController.class).putProject(item)).withRel("update"));
         resource.add(linkTo(methodOn(ProjectController.class).deleteProject(item.getProjectId())).withRel("delete"));        
         return resource;
     }

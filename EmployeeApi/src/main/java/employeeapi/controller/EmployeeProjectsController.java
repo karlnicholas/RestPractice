@@ -35,7 +35,7 @@ public class EmployeeProjectsController {
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceSupport> getApi() {
         ResourceSupport resource = new ResourceSupport();
-        resource.add( linkTo(methodOn(EmployeeProjectsController.class).getEmployeeProjects(null)).withRel("empId") );
+        resource.add( linkTo(methodOn(EmployeeProjectsController.class).getEmployeeProjects(null)).withRel("projects") );
         return ResponseEntity.ok(resource);
     }
 

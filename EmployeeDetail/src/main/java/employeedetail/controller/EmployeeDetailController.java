@@ -29,7 +29,7 @@ public class EmployeeDetailController {
     private EmployeeDetailRepository repository;
     private static final Logger logger = LoggerFactory.getLogger(EmployeeDetailController.class);
     
-    @GetMapping(produces=MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/employees", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<SparseEmployeeDetailItem>> findAllBy(Pageable pageable) {
         return ResponseEntity.ok(repository.findAllBy(pageable));
     }

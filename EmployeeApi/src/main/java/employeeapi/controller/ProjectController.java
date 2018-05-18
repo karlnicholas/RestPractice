@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import employeeapi.resource.ProjectResource;
 import employeeapi.resource.ProjectResourceAssembler;
+import employeeapi.resource.SparseProjectResource;
+import employeeapi.resource.SparseProjectResourceAssembler;
+import project.item.SparseProjectItem;
 import project.item.ProjectItem;
 
 @RestController
@@ -33,6 +36,8 @@ public class ProjectController {
     private ProjectClient projectClient;
     @Autowired
     private ProjectResourceAssembler assembler;
+    @Autowired
+    private SparseProjectResourceAssembler sparseAssembler;
     
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceSupport> getApi() {
@@ -46,12 +51,12 @@ public class ProjectController {
     }
 
     @GetMapping(value="/projects", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PagedResources<ProjectResource>> getProjects(
+    public ResponseEntity<PagedResources<SparseProjectResource>> getProjects(
         Pageable pageable, 
-        PagedResourcesAssembler<ProjectItem> pagedResourcesAssembler        
+        PagedResourcesAssembler<SparseProjectItem> pagedResourcesAssembler        
     ) {
-        ResponseEntity<Page<ProjectItem>> idsResponse = projectClient.getProjects(pageable);                
-        PagedResources<ProjectResource> pagedResources = pagedResourcesAssembler.toResource(idsResponse.getBody(), assembler);        
+        ResponseEntity<Page<SparseProjectItem>> idsResponse = projectClient.getProjects(pageable);                
+        PagedResources<SparseProjectResource> pagedResources = pagedResourcesAssembler.toResource(idsResponse.getBody(), sparseAssembler);        
         return new ResponseEntity<>(pagedResources, HttpStatus.OK);
     }
 
@@ -77,8 +82,8 @@ public class ProjectController {
 
     @FeignClient(name="EmployeeProject")
     public interface ProjectClient {
-        @GetMapping(value="/project", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<Page<ProjectItem>> getProjects(Pageable pageable);
+        @GetMapping(value="/project/projects", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<Page<SparseProjectItem>> getProjects(Pageable pageable);
 
         @GetMapping(value="/project/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<ProjectItem> getProject(@PathVariable("projectId") Integer projectId);

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import project.item.SparseProjectItem;
 import employeeproject.model.Project;
 import employeeproject.service.ProjectRepository;
 import project.item.ProjectItem;
@@ -29,8 +30,8 @@ public class ProjectController {
     private ProjectRepository projectPepository;
     private static final Logger logger = LoggerFactory.getLogger(ProjectController.class);
     
-    @GetMapping(produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<ProjectItem>> getProjects(Pageable pageable) {
+    @GetMapping(value="/projects", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<SparseProjectItem>> getProject(Pageable pageable) {
         return ResponseEntity.ok(projectPepository.findAllBy(pageable));
     }
     

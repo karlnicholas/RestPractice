@@ -8,12 +8,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -26,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import employeeproject.controller.ProjectController;
 import employeeproject.model.Project;
 import employeeproject.service.ProjectRepository;
+import project.item.SparseProjectItem;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.*;
@@ -41,6 +49,9 @@ public class ProjectTest {
     private ObjectMapper objectMapper;
     private Project project;
     private String projectItemJSON;
+    private SparseProjectItem sparseProjectItem;
+    private Page<SparseProjectItem> sparseProjectItems;
+    private PageRequest pageRequest;
     
     @Before
     public void setup() throws JsonProcessingException {
@@ -49,6 +60,11 @@ public class ProjectTest {
         project.setProjectName("name 1");
         project.setTechstack("techstack 1");
         projectItemJSON = objectMapper.writeValueAsString(project.asProjectItem());
+        sparseProjectItem = new SparseProjectItem(1, "Test Name");
+        List<SparseProjectItem> listSparseProjectItems = new ArrayList<>();
+        listSparseProjectItems.add(sparseProjectItem);
+        pageRequest = PageRequest.of(0, 20, Sort.unsorted());
+        sparseProjectItems = new PageImpl<>(listSparseProjectItems, pageRequest, 1);        
     }
 
     private void testResult(ResultActions r) throws Exception {
@@ -62,7 +78,37 @@ public class ProjectTest {
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGetProjects() throws Exception {
+        given(this.repository.findAllBy(pageRequest)).willReturn(sparseProjectItems);
+        mvc.perform(
+            get("/project/projects")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+        )
+        .andExpect(status().isOk())  
+        .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
+//      .andDo(print())    
+        .andExpect(jsonPath("$.content[0].projectId", is(1)))    
+        .andExpect(jsonPath("$.content[0].projectName", is("Test Name")))
+        .andExpect(jsonPath("$.pageable.sort.sorted", is(false)))
+        .andExpect(jsonPath("$.pageable.sort.unsorted", is(true)))
+        .andExpect(jsonPath("$.pageable.offset", is(0)))
+        .andExpect(jsonPath("$.pageable.pageSize", is(20)))
+        .andExpect(jsonPath("$.pageable.unpaged", is(false)))
+        .andExpect(jsonPath("$.pageable.paged", is(true)))
+        .andExpect(jsonPath("$.pageable.paged", is(true)))
+        .andExpect(jsonPath("$.totalElements", is(1)))
+        .andExpect(jsonPath("$.last", is(true)))
+        .andExpect(jsonPath("$.totalPages", is(1)))
+        .andExpect(jsonPath("$.size", is(20)))
+        .andExpect(jsonPath("$.number", is(0)))
+        .andExpect(jsonPath("$.sort.sorted", is(false)))
+        .andExpect(jsonPath("$.sort.unsorted", is(true)))
+        .andExpect(jsonPath("$.numberOfElements", is(1)))
+        .andExpect(jsonPath("$.first", is(true)));
+    }
+
+    @Test
+    public void testGetProject() throws Exception {
         given(this.repository.getOne(1)).willReturn(project);
         testResult(
             mvc.perform(

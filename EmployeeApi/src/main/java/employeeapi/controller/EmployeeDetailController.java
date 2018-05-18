@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.ResourceSupport;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import employeeapi.resource.EmployeeDetailResource;
 import employeeapi.resource.EmployeeDetailResourceAssembler;
+import employeeapi.resource.SparseEmployeeDetailResource;
+import employeeapi.resource.SparseEmployeeDetailResourceAssembler;
 import employeedetail.item.EmployeeDetailItem;
 import employeedetail.item.SparseEmployeeDetailItem;
 
@@ -31,15 +36,28 @@ public class EmployeeDetailController {
     private EmployeeDetailClient employeeDetailClient;
     @Autowired
     private EmployeeDetailResourceAssembler assembler;
+    @Autowired
+    private SparseEmployeeDetailResourceAssembler sparseAssembler;
     
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceSupport> getApi() {
         ResourceSupport resource = new ResourceSupport();
-        resource.add( linkTo(methodOn(EmployeeDetailController.class).getEmployeeDetail(null)).withRel("get") );
+        resource.add( linkTo(methodOn(EmployeeDetailController.class).getEmployees(null, null)).withRel("employees") );
+        resource.add( linkTo(methodOn(EmployeeDetailController.class).getEmployeeDetail(null)).withRel("detail") );
         resource.add( linkTo(methodOn(EmployeeDetailController.class).postEmployeeDetail(null)).withRel("create"));
         resource.add( linkTo(methodOn(EmployeeDetailController.class).putEmployeeDetail(null)).withRel("update"));
         resource.add( linkTo(methodOn(EmployeeDetailController.class).deleteEmployeeDetail(null)).withRel("delete"));
         return ResponseEntity.ok(resource);
+    }
+    
+    @GetMapping(value="/employees", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PagedResources<SparseEmployeeDetailResource>> getEmployees(
+            Pageable pageable, 
+            PagedResourcesAssembler<SparseEmployeeDetailItem> pagedResourcesAssembler        
+    ) {
+        ResponseEntity<Page<SparseEmployeeDetailItem>> idsResponse = employeeDetailClient.findAllBy(pageable);                
+        PagedResources<SparseEmployeeDetailResource> pagedResources = pagedResourcesAssembler.toResource(idsResponse.getBody(), sparseAssembler);        
+        return new ResponseEntity<>(pagedResources, HttpStatus.OK);
     }
     
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
@@ -64,7 +82,7 @@ public class EmployeeDetailController {
     
     @FeignClient(name="EmployeeDetail")
     public interface EmployeeDetailClient {
-        @GetMapping(value="/employee/detail", produces=MediaType.APPLICATION_JSON_VALUE)
+        @GetMapping(value="/employee/detail/employees", produces=MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<Page<SparseEmployeeDetailItem>> findAllBy(Pageable pageable);
 
         @GetMapping(value="/employee/detail/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)

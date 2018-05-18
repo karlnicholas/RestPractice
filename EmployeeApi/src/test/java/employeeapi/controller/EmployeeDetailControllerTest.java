@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,7 +27,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import employeeapi.controller.EmployeeDetailController.EmployeeDetailClient;
 import employeeapi.resource.EmployeeDetailResourceAssembler;
+import employeeapi.resource.SparseEmployeeDetailResourceAssembler;
 import employeedetail.item.EmployeeDetailItem;
+import employeedetail.item.SparseEmployeeDetailItem;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,11 +41,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(EmployeeDetailController.class)
-@Import(EmployeeDetailResourceAssembler.class)
+@Import({SparseEmployeeDetailResourceAssembler.class, EmployeeDetailResourceAssembler.class})
 public class EmployeeDetailControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
@@ -50,6 +58,10 @@ public class EmployeeDetailControllerTest {
     private EmployeeDetailClient employeeDetailClient;
     private EmployeeDetailItem employeeDetailItem;
     private String employeeDetailItemJSON;
+    private SparseEmployeeDetailItem sparseEmployeeDetailItem;
+    private Page<SparseEmployeeDetailItem> sparseEmployeeDetailItems;
+    private PageRequest pageRequest;
+    
 
     @Before
     public void setup() throws JsonProcessingException {
@@ -60,6 +72,13 @@ public class EmployeeDetailControllerTest {
         employeeDetailItem.setRole("Technical Analyst");
         employeeDetailItem.setRoleDescription("Analyze Technicals");
         employeeDetailItemJSON = objectMapper.writeValueAsString(employeeDetailItem);
+
+        sparseEmployeeDetailItem = new SparseEmployeeDetailItem(1, "Karl");
+
+        List<SparseEmployeeDetailItem> listSparseEmployeeDetailItems = new ArrayList<>();
+        listSparseEmployeeDetailItems.add(sparseEmployeeDetailItem);
+        pageRequest = PageRequest.of(0, 20, Sort.unsorted());
+        sparseEmployeeDetailItems = new PageImpl<>(listSparseEmployeeDetailItems, pageRequest, 1);
     }
 
     private void testPackage(ResultActions r) throws Exception {
@@ -79,6 +98,22 @@ public class EmployeeDetailControllerTest {
 
     @Test
     public void testGet() throws Exception {
+        when(employeeDetailClient.findAllBy(pageRequest)).thenReturn(ResponseEntity.ok(sparseEmployeeDetailItems));
+        mvc.perform(get("/employee/detail/employees").accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
+        .andExpect(jsonPath("$._embedded.sparseEmployeeDetailResourceList[0].empId", is(1)))
+        .andExpect(jsonPath("$._embedded.sparseEmployeeDetailResourceList[0].name", is("Karl")))
+        .andExpect(jsonPath("$._embedded.sparseEmployeeDetailResourceList[0]._links.self.href", is("http://localhost/employee/detail/1")))
+        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/detail/employees?page=0&size=20")))
+        .andExpect(jsonPath("$.page.size", is(20)))
+        .andExpect(jsonPath("$.page.totalElements", is(1)))
+        .andExpect(jsonPath("$.page.totalPages", is(1)))
+        .andExpect(jsonPath("$.page.number", is(0)));
+    }
+
+    @Test
+    public void testGetDetail() throws Exception {
         when(employeeDetailClient.getEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         testPackage(
             mvc.perform(get("/employee/detail/1").accept(MediaType.APPLICATION_JSON_VALUE))

@@ -32,7 +32,7 @@ public class EmployeeAddressController {
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceSupport> getApi() {
         ResourceSupport resource = new ResourceSupport();
-        resource.add( linkTo(methodOn(EmployeeAddressController.class).getEmployeeAddress(null)).withRel("empId") );
+        resource.add( linkTo(methodOn(EmployeeAddressController.class).getEmployeeAddress(null)).withRel("address") );
         resource.add( linkTo(methodOn(EmployeeAddressController.class).postEmployeeAddress(null)).withRel("create"));
         resource.add( linkTo(methodOn(EmployeeAddressController.class).putEmployeeAddress(null)).withRel("update"));
         resource.add( linkTo(methodOn(EmployeeAddressController.class).deleteEmployeeAddress(null)).withRel("delete"));

@@ -26,6 +26,8 @@ public class EmployeeProjectResourceAssembler
         EmployeeProjectResource resource = instantiateResource(item);                
         resource.fromEmployeeProjectItem(item);
         // … do further mapping
+        resource.add(linkTo(methodOn(EmployeeProjectController.class).putEmployeeProject(item)).withRel("update"));
+        resource.add(linkTo(methodOn(EmployeeProjectController.class).postEmployeeProject(item)).withRel("create"));
         resource.add(linkTo(methodOn(EmployeeProjectController.class).deleteEmployeeProject(item.getEmpId(), item.getProjectId())).withRel("delete"));        
         return resource;
     }

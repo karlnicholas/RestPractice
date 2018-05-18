@@ -3,7 +3,7 @@ package employeeapi.resource;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import employeeapi.controller.EmployeeInfoController;
+import employeeapi.controller.EmployeeDetailController;
 import employeedetail.item.SparseEmployeeDetailItem;
 
 /**
@@ -14,7 +14,7 @@ public class SparseEmployeeDetailResourceAssembler
         extends ResourceAssemblerSupport<SparseEmployeeDetailItem, SparseEmployeeDetailResource> {
 
     public SparseEmployeeDetailResourceAssembler() {
-        super(EmployeeInfoController.class, SparseEmployeeDetailResource.class);
+        super(EmployeeDetailController.class, SparseEmployeeDetailResource.class);
     }
 
     @Override
