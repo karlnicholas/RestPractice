@@ -12,8 +12,6 @@ public class EmployeeDetailItem {
     private Integer empId;
     private String name;
     private String role;
-    @JsonProperty("salary")
-    @JsonSerialize(using = MoneySerializer.class)
     private BigDecimal salary;
     private String roleDescription;
 }

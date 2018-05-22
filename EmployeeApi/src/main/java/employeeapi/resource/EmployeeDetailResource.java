@@ -4,18 +4,12 @@ import java.math.BigDecimal;
 
 import org.springframework.hateoas.ResourceSupport;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import employeedetail.item.EmployeeDetailItem;
-import employeedetail.item.MoneySerializer;
 
 public class EmployeeDetailResource extends ResourceSupport {
     private Integer empId;
     private String name;
     private String role;
-    @JsonProperty("salary")
-    @JsonSerialize(using = MoneySerializer.class)
     private BigDecimal salary;
     private String roleDescription;
     public void fromEmployeeDetailItem(EmployeeDetailItem employeeDetailItem) {

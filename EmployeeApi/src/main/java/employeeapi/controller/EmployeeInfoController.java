@@ -10,10 +10,6 @@ import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,14 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import employeeaddress.item.EmployeeAddressItem;
-import employeeapi.controller.EmployeeDetailController.EmployeeDetailClient;
 import employeeapi.resource.EmployeeInfoResource;
 import employeeapi.resource.EmployeeInfoResourceAssembler;
-import employeeapi.resource.SparseEmployeeDetailResource;
-import employeeapi.resource.SparseEmployeeDetailResourceAssembler;
 import employeeapi.service.EmployeeInfoService;
 import employeedetail.item.EmployeeDetailItem;
-import employeedetail.item.SparseEmployeeDetailItem;
 import project.item.ProjectItem;
 
 @RestController
@@ -42,29 +34,14 @@ public class EmployeeInfoController {
     private EmployeeInfoService employeeInfoService;
     @Autowired
     private EmployeeInfoResourceAssembler assembler;
-    @Autowired
-    private SparseEmployeeDetailResourceAssembler sparseAssembler;
-    @Autowired
-    private EmployeeDetailClient employeeDetailClient;
     
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceSupport> getApi() {
         ResourceSupport resource = new ResourceSupport();
-        resource.add( linkTo(methodOn(EmployeeInfoController.class).listSparse(null, null)).withRel("list") );
         resource.add( linkTo(methodOn(EmployeeInfoController.class).getEmployeeInfo(null)).withRel("empId"));
         return ResponseEntity.ok(resource);
     }
     
-    @GetMapping(value="/list", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PagedResources<SparseEmployeeDetailResource>> listSparse(
-        Pageable pageable, 
-        PagedResourcesAssembler<SparseEmployeeDetailItem> pagedResourcesAssembler        
-    ) {
-        ResponseEntity<Page<SparseEmployeeDetailItem>> idsResponse = employeeDetailClient.findAllBy(pageable);                
-        PagedResources<SparseEmployeeDetailResource> pagedResources = pagedResourcesAssembler.toResource(idsResponse.getBody(), sparseAssembler);        
-        return new ResponseEntity<>(pagedResources, HttpStatus.OK);
-    }
-
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeInfoResource> getEmployeeInfo(@PathVariable("empId") Integer empId) {
         logger.debug("empId = " + empId);
