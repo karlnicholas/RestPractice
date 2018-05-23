@@ -79,7 +79,7 @@ public class EmployeeDetailTest {
         .andExpect(jsonPath("$.name", is("Karl")))
         .andExpect(jsonPath("$.role", is("Technical Analyst")))
         .andExpect(jsonPath("$.roleDescription", is("Analyze, Design, Code, and Deploy Enterprise Applications")))
-        .andExpect(jsonPath("$.salary", is("100000.00")));
+        .andExpect(jsonPath("$.salary", is(100000.00)));
     }
           
     @Test

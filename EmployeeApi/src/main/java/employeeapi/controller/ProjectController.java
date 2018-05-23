@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.ResourceSupport;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,8 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import employeeapi.resource.ProjectResource;
 import employeeapi.resource.ProjectResourceAssembler;
-import employeeapi.resource.SparseProjectResource;
-import employeeapi.resource.SparseProjectResourceAssembler;
 import project.item.SparseProjectItem;
 import project.item.ProjectItem;
 
@@ -36,28 +31,15 @@ public class ProjectController {
     private ProjectClient projectClient;
     @Autowired
     private ProjectResourceAssembler assembler;
-    @Autowired
-    private SparseProjectResourceAssembler sparseAssembler;
     
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceSupport> getApi() {
         ResourceSupport resource = new ResourceSupport();
-        resource.add( linkTo(methodOn(ProjectController.class).getProjects(null, null)).withRel("projects") );
         resource.add( linkTo(methodOn(ProjectController.class).getProject(null)).withRel("project") );
         resource.add( linkTo(methodOn(ProjectController.class).postProject(null)).withRel("create"));
         resource.add( linkTo(methodOn(ProjectController.class).putProject(null)).withRel("update"));
         resource.add( linkTo(methodOn(ProjectController.class).deleteProject(null)).withRel("delete"));
         return ResponseEntity.ok(resource);
-    }
-
-    @GetMapping(value="/projects", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PagedResources<SparseProjectResource>> getProjects(
-        Pageable pageable, 
-        PagedResourcesAssembler<SparseProjectItem> pagedResourcesAssembler        
-    ) {
-        ResponseEntity<Page<SparseProjectItem>> idsResponse = projectClient.getProjects(pageable);                
-        PagedResources<SparseProjectResource> pagedResources = pagedResourcesAssembler.toResource(idsResponse.getBody(), sparseAssembler);        
-        return new ResponseEntity<>(pagedResources, HttpStatus.OK);
     }
 
     @GetMapping(value="/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)

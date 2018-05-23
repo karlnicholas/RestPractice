@@ -26,6 +26,7 @@
         <module>EmployeeProject</module>
         <module>EmployeeApi</module>
         <module>EmployeeEureka</module>
+        <module>spring-cloud-starter-bootstrap</module>
     </modules>
     <dependencyManagement>
         <dependencies>

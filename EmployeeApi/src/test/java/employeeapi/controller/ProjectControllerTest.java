@@ -10,10 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,9 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import employeeapi.controller.ProjectController.ProjectClient;
 import employeeapi.resource.ProjectResourceAssembler;
-import employeeapi.resource.SparseProjectResourceAssembler;
 import project.item.ProjectItem;
-import project.item.SparseProjectItem;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,36 +34,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(ProjectController.class)
-@Import({SparseProjectResourceAssembler.class, ProjectResourceAssembler.class})
+@Import({ProjectResourceAssembler.class})
 public class ProjectControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mvc;
     @MockBean
-    // mock the FeignClient
     private ProjectClient projectClient;
+
     private ProjectItem projectItem;
-    private SparseProjectItem sparseProjectItem;
-    private Page<SparseProjectItem> sparseProjectItems;
     private String projectItemJSON;
-    private PageRequest pageRequest;
 
     @Before
     public void setup() throws JsonProcessingException {
         projectItem = new ProjectItem(1, "Test Project", "Test Techstack");
         projectItemJSON = objectMapper.writeValueAsString(projectItem);
-        sparseProjectItem = new SparseProjectItem(1, "Test Project");
-        List<SparseProjectItem> listSparseProjectItems = new ArrayList<>();
-        listSparseProjectItems.add(sparseProjectItem);
-        pageRequest = PageRequest.of(0, 20, Sort.unsorted());
-        sparseProjectItems = new PageImpl<>(listSparseProjectItems, pageRequest, 1);
     }
 
     private void testPackage(ResultActions r) throws Exception {
@@ -83,22 +66,6 @@ public class ProjectControllerTest {
         .andExpect(jsonPath("$._links.create.href", is("http://localhost/project/create")))
         .andExpect(jsonPath("$._links.update.href", is("http://localhost/project/update")))
         .andExpect(jsonPath("$._links.delete.href", is("http://localhost/project/delete/1")));
-    }
-
-    @Test
-    public void testGetProjects() throws Exception {
-        when(projectClient.getProjects(pageRequest)).thenReturn(ResponseEntity.ok(sparseProjectItems));
-        mvc.perform(get("/project/projects").accept(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isOk())
-        .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
-        .andExpect(jsonPath("$._embedded.sparseProjectResourceList[0].projectId", is(1)))
-        .andExpect(jsonPath("$._embedded.sparseProjectResourceList[0].projectName", is("Test Project")))
-        .andExpect(jsonPath("$._embedded.sparseProjectResourceList[0]._links.self.href", is("http://localhost/project/1")))
-        .andExpect(jsonPath("$._links.self.href", is("http://localhost/project/projects?page=0&size=20")))
-        .andExpect(jsonPath("$.page.size", is(20)))
-        .andExpect(jsonPath("$.page.totalElements", is(1)))
-        .andExpect(jsonPath("$.page.totalPages", is(1)))
-        .andExpect(jsonPath("$.page.number", is(0)));
     }
 
     @Test

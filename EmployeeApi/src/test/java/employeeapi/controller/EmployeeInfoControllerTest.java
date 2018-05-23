@@ -11,6 +11,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,15 +24,17 @@ import employeeaddress.item.EmployeeAddressItem;
 import employeeapi.controller.EmployeeAddressController.EmployeeAddressClient;
 import employeeapi.controller.EmployeeDetailController.EmployeeDetailClient;
 import employeeapi.controller.EmployeeProjectsController.EmployeeProjectsClient;
+import employeeapi.controller.ProjectController.ProjectClient;
 import employeeapi.resource.EmployeeInfoResourceAssembler;
 import employeeapi.resource.SparseEmployeeDetailResourceAssembler;
+import employeeapi.resource.SparseProjectResourceAssembler;
 import employeeapi.service.EmployeeInfoService;
 import employeedetail.item.EmployeeDetailItem;
 import employeedetail.item.SparseEmployeeDetailItem;
 import project.item.ProjectItem;
+import project.item.SparseProjectItem;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,6 +50,7 @@ import java.util.List;
     EmployeeInfoResourceAssembler.class, 
     EmployeeInfoService.class, 
     SparseEmployeeDetailResourceAssembler.class,
+    SparseProjectResourceAssembler.class, 
 })
 public class EmployeeInfoControllerTest {
 
@@ -57,17 +63,34 @@ public class EmployeeInfoControllerTest {
     @MockBean
     private EmployeeDetailClient employeeDetailClient;
     @MockBean
-    private EmployeeProjectsClient employeeProjectsClient;
-    
+    private EmployeeProjectsClient employeeProjectsClient;    
+    @MockBean
+    private ProjectClient projectClient;
     
     private EmployeeAddressItem employeeAddressItem;
     private EmployeeDetailItem employeeDetailItem;
     private ProjectItem projectItem;
     private List<ProjectItem> projectItems;
-     
+    private SparseProjectItem sparseProjectItem;
+    private Page<SparseProjectItem> sparseProjectItems;
+    private SparseEmployeeDetailItem sparseEmployeeDetailItem;
+    private Page<SparseEmployeeDetailItem> sparseEmployeeDetailItems;
+    private PageRequest pageRequest;
 
     @Before
     public void setup() {
+        pageRequest = PageRequest.of(0, 20, Sort.unsorted());
+
+        sparseProjectItem = new SparseProjectItem(1, "Test Project");
+        List<SparseProjectItem> listSparseProjectItems = new ArrayList<>();
+        listSparseProjectItems.add(sparseProjectItem);
+        sparseProjectItems = new PageImpl<>(listSparseProjectItems, pageRequest, 1);
+
+        sparseEmployeeDetailItem = new SparseEmployeeDetailItem(1, "Karl");
+        List<SparseEmployeeDetailItem> listSparseEmployeeDetailItems = new ArrayList<>();
+        listSparseEmployeeDetailItems.add(sparseEmployeeDetailItem);
+        sparseEmployeeDetailItems = new PageImpl<>(listSparseEmployeeDetailItems, pageRequest, 1);
+
         employeeAddressItem = new EmployeeAddressItem();
         employeeAddressItem.setEmpId(1);
         employeeAddressItem.setAddress1("Address 1");
@@ -94,12 +117,44 @@ public class EmployeeInfoControllerTest {
     }
 
     @Test
+    public void testGet() throws Exception {
+        when(employeeDetailClient.findAllBy(pageRequest)).thenReturn(ResponseEntity.ok(sparseEmployeeDetailItems));
+        mvc.perform(get("/info/employees").accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
+        .andExpect(jsonPath("$._embedded.sparseEmployeeDetailResourceList[0].empId", is(1)))
+        .andExpect(jsonPath("$._embedded.sparseEmployeeDetailResourceList[0].name", is("Karl")))
+        .andExpect(jsonPath("$._embedded.sparseEmployeeDetailResourceList[0]._links.self.href", is("http://localhost/employee/detail/1")))
+        .andExpect(jsonPath("$._links.self.href", is("http://localhost/info/employees?page=0&size=20")))
+        .andExpect(jsonPath("$.page.size", is(20)))
+        .andExpect(jsonPath("$.page.totalElements", is(1)))
+        .andExpect(jsonPath("$.page.totalPages", is(1)))
+        .andExpect(jsonPath("$.page.number", is(0)));
+    }
+
+    @Test
+    public void testGetProjects() throws Exception {
+        when(projectClient.getProjects(pageRequest)).thenReturn(ResponseEntity.ok(sparseProjectItems));
+        mvc.perform(get("/info/projects").accept(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isOk())
+        .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
+        .andExpect(jsonPath("$._embedded.sparseProjectResourceList[0].projectId", is(1)))
+        .andExpect(jsonPath("$._embedded.sparseProjectResourceList[0].projectName", is("Test Project")))
+        .andExpect(jsonPath("$._embedded.sparseProjectResourceList[0]._links.self.href", is("http://localhost/project/1")))
+        .andExpect(jsonPath("$._links.self.href", is("http://localhost/info/projects?page=0&size=20")))
+        .andExpect(jsonPath("$.page.size", is(20)))
+        .andExpect(jsonPath("$.page.totalElements", is(1)))
+        .andExpect(jsonPath("$.page.totalPages", is(1)))
+        .andExpect(jsonPath("$.page.number", is(0)));
+    }
+
+    @Test
     public void testEmployee() throws Exception {
         when(employeeAddressClient.getEmployeeAddress(1)).thenReturn(ResponseEntity.ok(employeeAddressItem));
         when(employeeDetailClient.getEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
         when(employeeProjectsClient.getEmployeeProjectsFull(1)).thenReturn(ResponseEntity.ok(projectItems));
 
-        mvc.perform(get("/employee/info/1").accept(MediaType.APPLICATION_JSON_VALUE))
+        mvc.perform(get("/info/1").accept(MediaType.APPLICATION_JSON_VALUE))
 //            .andDo(print())    
             .andExpect(status().isOk())    
             .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
@@ -117,7 +172,7 @@ public class EmployeeInfoControllerTest {
             .andExpect(jsonPath("$.projects[0].projectId", is(1)))
             .andExpect(jsonPath("$.projects[0].projectName", is("Test Project Name")))
             .andExpect(jsonPath("$.projects[0].techstack", is("Test Project Techstack")))
-            .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/info/1")))
+            .andExpect(jsonPath("$._links.self.href", is("http://localhost/info/1")))
             .andReturn();
     }
 
