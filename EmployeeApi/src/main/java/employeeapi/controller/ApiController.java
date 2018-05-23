@@ -23,7 +23,7 @@ public class ApiController {
         if ( request != null )
             logger.info("Request from remote host: " + request.getRemoteHost());
         ResourceSupport resource = new ResourceSupport();
-        resource.add( linkTo(methodOn(EmployeeApiController.class).getApi()).withRel("info") );
+        resource.add( linkTo(methodOn(EmployeeInfoController.class).getApi()).withRel("info") );
         resource.add( linkTo(methodOn(EmployeeApiController.class).getApi()).withRel("employee") );
         resource.add( linkTo(methodOn(ProjectController.class).getApi()).withRel("project") );
         return ResponseEntity.ok(resource);

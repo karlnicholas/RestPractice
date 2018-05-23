@@ -20,7 +20,6 @@ public class EmployeeApiController {
         resource.add( linkTo(methodOn(EmployeeDetailController.class).getApi()).withRel("detail") );
         resource.add( linkTo(methodOn(EmployeeProjectController.class).getApi()).withRel("project") );
         resource.add( linkTo(methodOn(EmployeeProjectsController.class).getApi()).withRel("projects") );
-        resource.add( linkTo(methodOn(EmployeeInfoController.class).getApi()).withRel("info") );
         return ResponseEntity.ok(resource);
     }
 
