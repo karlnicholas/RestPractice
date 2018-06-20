@@ -1,30 +1,32 @@
 package employeeapi.controller;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import employeeapi.controller.EmployeeProjectController.EmployeeProjectClient;
-import employeeapi.resource.EmployeeProjectResourceAssembler;
 import employeeproject.item.EmployeeProjectItem;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -39,19 +41,22 @@ import java.util.List;
 
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(EmployeeProjectController.class)
-@Import(EmployeeProjectResourceAssembler.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class EmployeeProjectControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mvc;
-    @MockBean
-    // mock the FeignClient
-    private EmployeeProjectClient employeeProjectClient;
+    @Autowired
+    private RestTemplate restTemplate;
+    private MockRestServiceServer server;
+
     private EmployeeProjectItem employeeProjectItem;
     private List<EmployeeProjectItem> employeeProjectItems;
     private String employeeProjectItemJSON;
+    private String employeeProjectItemsJSON;
 
     @Before
     public void setup() throws JsonProcessingException {
@@ -61,6 +66,8 @@ public class EmployeeProjectControllerTest {
         employeeProjectItemJSON = objectMapper.writeValueAsString(employeeProjectItem);
         employeeProjectItems = new ArrayList<>();
         employeeProjectItems.add(employeeProjectItem);
+        employeeProjectItemsJSON = objectMapper.writeValueAsString(employeeProjectItems);
+        server = MockRestServiceServer.createServer(restTemplate);
     }
 
     private void testPackage(ResultActions r) throws Exception {
@@ -74,7 +81,8 @@ public class EmployeeProjectControllerTest {
 
     @Test
     public void testGet() throws Exception {
-        when(employeeProjectClient.getEmployeeProjects(1)).thenReturn(ResponseEntity.ok(employeeProjectItems));
+        server.expect(requestTo(EmployeeProjectController.serviceUrl + "/employee/project/1")).andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeProjectItemsJSON));
         mvc.perform(get("/employee/project/1").accept(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isOk())
         .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
@@ -87,7 +95,8 @@ public class EmployeeProjectControllerTest {
 
     @Test
     public void testCreate() throws Exception {
-        when(employeeProjectClient.postEmployeeProject(employeeProjectItem)).thenReturn(ResponseEntity.ok(employeeProjectItem));
+        server.expect(requestTo(EmployeeProjectController.serviceUrl + "/employee/project/create")).andExpect(method(HttpMethod.POST))
+        .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeProjectItemJSON));
         testPackage(
             mvc.perform(post("/employee/project/create")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -99,7 +108,8 @@ public class EmployeeProjectControllerTest {
 
     @Test
     public void testUpdate() throws Exception {
-        when(employeeProjectClient.putEmployeeProject(employeeProjectItem)).thenReturn(ResponseEntity.ok(employeeProjectItem));
+        server.expect(requestTo(EmployeeProjectController.serviceUrl + "/employee/project/update")).andExpect(method(HttpMethod.PUT))
+        .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeProjectItemJSON));
         testPackage(
             mvc.perform(put("/employee/project/update")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -111,10 +121,12 @@ public class EmployeeProjectControllerTest {
 
     @Test
     public void testDlete() throws Exception {
-        when(employeeProjectClient.deleteEmployeeProject(1, 1)).thenReturn(ResponseEntity.ok(HttpStatus.OK.name()));
+        server.expect(requestTo(EmployeeProjectController.serviceUrl + "/employee/project/delete/1/1")).andExpect(method(HttpMethod.DELETE))
+        .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.TEXT_PLAIN).body(HttpStatus.OK.name()));
         mvc.perform(delete("/employee/project/delete/1/1"))
 //      .andDo(print())    
         .andExpect(status().isOk())
         .andExpect(content().string("OK"));    
-    }    
+    }
+        
 }

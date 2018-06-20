@@ -3,12 +3,13 @@ package employeeapi.controller;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.net.URI;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.ResourceSupport;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,20 +19,22 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import employeeapi.resource.EmployeeDetailResource;
 import employeeapi.resource.EmployeeDetailResourceAssembler;
 import employeedetail.item.EmployeeDetailItem;
-import employeedetail.item.SparseEmployeeDetailItem;
 
 @RestController
 @RequestMapping("/employee/detail")
 public class EmployeeDetailController {
     @Autowired
-    private EmployeeDetailClient employeeDetailClient;
+    private RestTemplate restTemplate;
     @Autowired
     private EmployeeDetailResourceAssembler assembler;
     
+    protected static final String serviceUrl = "http://EmployeeDetail"; // EmployeeAddress is the name of the microservice we're calling
+
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceSupport> getApi() {
         ResourceSupport resource = new ResourceSupport();
@@ -44,39 +47,39 @@ public class EmployeeDetailController {
     
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeDetailResource> getEmployeeDetail(@PathVariable Integer empId) {
-        return ResponseEntity.ok( assembler.toResource(employeeDetailClient.getEmployeeDetail(empId).getBody()) );
+        EmployeeDetailItem employeeDetailItem = restTemplate.getForObject( 
+                serviceUrl + "/employee/detail/{empId}", 
+                EmployeeDetailItem.class, 
+                empId);
+        return ResponseEntity.ok( assembler.toResource(employeeDetailItem) );
     }
     
     @PostMapping(value="/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeDetailResource> postEmployeeDetail(@RequestBody EmployeeDetailItem employeeDetailItem) {
-        return ResponseEntity.ok( assembler.toResource(employeeDetailClient.postEmployeeDetail(employeeDetailItem).getBody()) );
+        RequestEntity<EmployeeDetailItem> request = RequestEntity
+            .post(URI.create(serviceUrl + "/employee/detail/create"))
+            .accept(MediaType.APPLICATION_JSON)
+            .body(employeeDetailItem);
+        return ResponseEntity.ok( 
+            assembler.toResource(restTemplate.exchange(request, EmployeeDetailItem.class).getBody()) 
+        );
     }
 
     @PutMapping(value="/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EmployeeDetailResource> putEmployeeDetail(@RequestBody EmployeeDetailItem employeeDetailItem) {
-        return ResponseEntity.ok( assembler.toResource(employeeDetailClient.putEmployeeDetail(employeeDetailItem).getBody()) );
+        RequestEntity<EmployeeDetailItem> request = RequestEntity
+            .put(URI.create(serviceUrl + "/employee/detail/update"))
+            .accept(MediaType.APPLICATION_JSON)
+            .body(employeeDetailItem);
+        return ResponseEntity.ok( 
+            assembler.toResource(restTemplate.exchange(request, EmployeeDetailItem.class).getBody()) 
+        );
     }
 
     @DeleteMapping(value="/delete/{empId}", produces=MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> deleteEmployeeDetail(@PathVariable Integer empId) {
-        return ResponseEntity.ok( employeeDetailClient.deleteEmployeeDetail(empId).getBody() );
+        restTemplate.delete(serviceUrl + "/employee/detail/delete/{empId}", empId);
+        return ResponseEntity.ok( HttpStatus.OK.name() );
     }
     
-    @FeignClient(name="EmployeeDetail")
-    public interface EmployeeDetailClient {
-        @GetMapping(value="/employee/detail/employees", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<Page<SparseEmployeeDetailItem>> findAllBy(Pageable pageable);
-
-        @GetMapping(value="/employee/detail/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeDetailItem> getEmployeeDetail(@PathVariable("empId") Integer empId);
-        
-        @PostMapping(value="/employee/detail/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeDetailItem> postEmployeeDetail(@RequestBody EmployeeDetailItem employeeDetailItem);
-
-        @PutMapping(value="/employee/detail/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<EmployeeDetailItem> putEmployeeDetail(@RequestBody EmployeeDetailItem employeeDetailItem);
-
-        @DeleteMapping(value="/employee/detail/delete/{empId}", produces=MediaType.TEXT_PLAIN_VALUE)
-        public ResponseEntity<String> deleteEmployeeDetail(@PathVariable("empId") Integer empId);
-    }
 }

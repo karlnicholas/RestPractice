@@ -3,12 +3,13 @@ package employeeapi.controller;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.net.URI;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.ResourceSupport;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,19 +19,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import employeeapi.resource.ProjectResource;
 import employeeapi.resource.ProjectResourceAssembler;
-import project.item.SparseProjectItem;
 import project.item.ProjectItem;
 
 @RestController
 @RequestMapping("/project")
 public class ProjectController {
     @Autowired
-    private ProjectClient projectClient;
+    private RestTemplate restTemplate;
     @Autowired
     private ProjectResourceAssembler assembler;
+
+    protected static final String serviceUrl = "http://Project"; // EmployeeAddress is the name of the microservice we're calling
     
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceSupport> getApi() {
@@ -41,42 +44,40 @@ public class ProjectController {
         resource.add( linkTo(methodOn(ProjectController.class).deleteProject(null)).withRel("delete"));
         return ResponseEntity.ok(resource);
     }
-
     @GetMapping(value="/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProjectResource> getProject(@PathVariable Integer projectId ) {
-        return ResponseEntity.ok(assembler.toResource(projectClient.getProject(projectId).getBody()));    
+        ProjectItem response = restTemplate.getForObject( 
+                serviceUrl + "/project/{projectId}", 
+                ProjectItem.class, 
+                projectId);
+        return ResponseEntity.ok( assembler.toResource(response) );
     }
 
     @PostMapping(value="/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProjectResource> postProject(@RequestBody ProjectItem projectItem) {
-        return ResponseEntity.ok( assembler.toResource(projectClient.postProject(projectItem).getBody()) );
+        RequestEntity<ProjectItem> request = RequestEntity
+            .post(URI.create(serviceUrl + "/project/create"))
+            .accept(MediaType.APPLICATION_JSON)
+            .body(projectItem);
+        return ResponseEntity.ok( 
+            assembler.toResource(request.getBody()) 
+        );
     }
 
     @PutMapping(value="/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProjectResource> putProject(@RequestBody ProjectItem projectItem) {
-        return ResponseEntity.ok( assembler.toResource(projectClient.putProject(projectItem).getBody()) );
+        RequestEntity<ProjectItem> request = RequestEntity
+                .put(URI.create(serviceUrl + "/project/update"))
+                .accept(MediaType.APPLICATION_JSON)
+                .body(projectItem);
+            return ResponseEntity.ok( 
+                assembler.toResource(request.getBody()) 
+            );
     }
 
     @DeleteMapping(value="/delete/{projectId}", produces=MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> deleteProject(@PathVariable Integer projectId) {
-        return ResponseEntity.ok( projectClient.deleteProject(projectId).getBody() );
+        restTemplate.delete(serviceUrl + "/project/delete/{projectId}", projectId);
+        return ResponseEntity.ok( HttpStatus.OK.name() );
     }
-
-    @FeignClient(name="EmployeeProject")
-    public interface ProjectClient {
-        @GetMapping(value="/project/projects", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<Page<SparseProjectItem>> getProjects(Pageable pageable);
-
-        @GetMapping(value="/project/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ProjectItem> getProject(@PathVariable("projectId") Integer projectId);
-        
-        @PostMapping(value="/project/create", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ProjectItem> postProject(@RequestBody ProjectItem projectItem);
-
-        @PutMapping(value="/project/update", consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<ProjectItem> putProject(@RequestBody ProjectItem projectItem);
-
-        @DeleteMapping(value="/project/delete/{projectId}", produces=MediaType.TEXT_PLAIN_VALUE)
-        public ResponseEntity<String> deleteProject(@PathVariable("projectId") Integer projectId);
-    }    
 }

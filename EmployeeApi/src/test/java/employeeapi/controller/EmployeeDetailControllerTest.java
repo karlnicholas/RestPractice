@@ -1,30 +1,32 @@
 package employeeapi.controller;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import employeeapi.controller.EmployeeDetailController.EmployeeDetailClient;
-import employeeapi.resource.EmployeeDetailResourceAssembler;
 import employeedetail.item.EmployeeDetailItem;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,16 +39,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(EmployeeDetailController.class)
-@Import({EmployeeDetailResourceAssembler.class})
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class EmployeeDetailControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mvc;
-    @MockBean
-    // mock the FeignClient
-    private EmployeeDetailClient employeeDetailClient;
+    @Autowired
+    private RestTemplate restTemplate;
+    private MockRestServiceServer server;
+
     private EmployeeDetailItem employeeDetailItem;
     private String employeeDetailItemJSON;
     
@@ -60,7 +64,7 @@ public class EmployeeDetailControllerTest {
         employeeDetailItem.setRole("Technical Analyst");
         employeeDetailItem.setRoleDescription("Analyze Technicals");
         employeeDetailItemJSON = objectMapper.writeValueAsString(employeeDetailItem);
-
+        server = MockRestServiceServer.createServer(restTemplate);
     }
 
     private void testPackage(ResultActions r) throws Exception {
@@ -80,7 +84,8 @@ public class EmployeeDetailControllerTest {
 
     @Test
     public void testGetDetail() throws Exception {
-        when(employeeDetailClient.getEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
+        server.expect(requestTo(EmployeeDetailController.serviceUrl + "/employee/detail/1")).andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeDetailItemJSON));
         testPackage(
             mvc.perform(get("/employee/detail/1").accept(MediaType.APPLICATION_JSON_VALUE))
         );
@@ -88,7 +93,8 @@ public class EmployeeDetailControllerTest {
 
     @Test
     public void testCreate() throws Exception {
-        when(employeeDetailClient.postEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));
+        server.expect(requestTo(EmployeeDetailController.serviceUrl + "/employee/detail/create")).andExpect(method(HttpMethod.POST))
+        .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeDetailItemJSON));
         testPackage(
             mvc.perform(post("/employee/detail/create")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -100,7 +106,8 @@ public class EmployeeDetailControllerTest {
 
     @Test
     public void testUpdate() throws Exception {
-        when(employeeDetailClient.putEmployeeDetail(employeeDetailItem)).thenReturn(ResponseEntity.ok(employeeDetailItem));
+        server.expect(requestTo(EmployeeDetailController.serviceUrl + "/employee/detail/update")).andExpect(method(HttpMethod.PUT))
+        .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeDetailItemJSON));
         testPackage(
             mvc.perform(put("/employee/detail/update")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -111,11 +118,13 @@ public class EmployeeDetailControllerTest {
     }
 
     @Test
-    public void testDlete() throws Exception {
-        when(employeeDetailClient.deleteEmployeeDetail(1)).thenReturn(ResponseEntity.ok(HttpStatus.OK.name()));
+    public void testDelete() throws Exception {
+        server.expect(requestTo(EmployeeDetailController.serviceUrl + "/employee/detail/delete/1")).andExpect(method(HttpMethod.DELETE))
+        .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.TEXT_PLAIN).body(HttpStatus.OK.name()));
         mvc.perform(delete("/employee/detail/delete/1"))
 //      .andDo(print())    
         .andExpect(status().isOk())
         .andExpect(content().string("OK"));    
-    }    
+    }
+
 }

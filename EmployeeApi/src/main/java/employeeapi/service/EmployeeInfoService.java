@@ -12,14 +12,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import employeeaddress.item.EmployeeAddressItem;
-import employeeapi.controller.EmployeeAddressController.EmployeeAddressClient;
-import employeeapi.controller.EmployeeDetailController.EmployeeDetailClient;
-import employeeapi.controller.EmployeeProjectsController.EmployeeProjectsClient;
 import employeedetail.item.EmployeeDetailItem;
 import project.item.ProjectItem;
 
 @Service
 public class EmployeeInfoService {
+/*
     private static final Logger logger = LoggerFactory.getLogger(EmployeeInfoService.class);
     @Autowired
     private EmployeeAddressClient employeeAddressClient;
@@ -57,4 +55,5 @@ public class EmployeeInfoService {
         }
         return CompletableFuture.completedFuture(employeeProjectsResponse.getBody());
     }
+*/    
 }

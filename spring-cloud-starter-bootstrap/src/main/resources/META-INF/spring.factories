@@ -1,3 +1,0 @@
-
-# Auto configuration
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.elderbyte.spring.cloud.bootstrap.BootstrapAutoConfiguration
