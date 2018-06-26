@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import employeedetail.item.SparseEmployeeDetailItem;
 import project.item.SparseProjectItem;
 import employeeproject.model.Project;
 import employeeproject.service.ProjectRepository;
+import employeeutil.CustomPageImpl;
 import project.item.ProjectItem;
 
 @RestController
@@ -31,8 +33,14 @@ public class ProjectController {
     private static final Logger logger = LoggerFactory.getLogger(ProjectController.class);
     
     @GetMapping(value="/projects", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<SparseProjectItem>> getProject(Pageable pageable) {
-        return ResponseEntity.ok(projectPepository.findAllBy(pageable));
+    public ResponseEntity<CustomPageImpl<SparseProjectItem>> getProject(Pageable pageable) {
+        Page<SparseProjectItem> r = projectPepository.findAllBy(pageable);
+        CustomPageImpl<SparseProjectItem> p = new CustomPageImpl<>();
+        p.setContent(r.getContent());
+        p.setNumber(r.getNumber());
+        p.setSize(r.getSize());
+        p.setTotalElements(r.getTotalElements());
+        return ResponseEntity.ok(p);
     }
     
     @GetMapping(value="/{projectId}", produces=MediaType.APPLICATION_JSON_VALUE)

@@ -1,26 +1,17 @@
 package employeeapi.controller;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -31,12 +22,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import employeeaddress.item.EmployeeAddressItem;
-import employeeapi.resource.EmployeeInfoResourceAssembler;
-import employeeapi.resource.SparseEmployeeDetailResourceAssembler;
-import employeeapi.resource.SparseProjectResourceAssembler;
-import employeeapi.service.EmployeeInfoService;
 import employeedetail.item.EmployeeDetailItem;
 import employeedetail.item.SparseEmployeeDetailItem;
+import employeeutil.CustomPageImpl;
 import project.item.ProjectItem;
 import project.item.SparseProjectItem;
 
@@ -82,28 +70,34 @@ public class EmployeeInfoControllerTest {
     private List<ProjectItem> projectItems;
 
     private SparseProjectItem sparseProjectItem;
-    private Page<SparseProjectItem> sparseProjectItems;
+    private CustomPageImpl<SparseProjectItem> sparseProjectItems;
     private String sparseProjectItemsJSON;
 
     private SparseEmployeeDetailItem sparseEmployeeDetailItem;
-    private Page<SparseEmployeeDetailItem> sparseEmployeeDetailItems;
+    private CustomPageImpl<SparseEmployeeDetailItem> sparseEmployeeDetailItems;
     private String sparseEmployeeDetailItemsJSON;
-
-    private PageRequest pageRequest;
 
     @Before
     public void setup() throws JsonProcessingException {
-        pageRequest = PageRequest.of(0, 20, Sort.unsorted());
 
         sparseProjectItem = new SparseProjectItem(1, "Test Project");
         List<SparseProjectItem> listSparseProjectItems = new ArrayList<>();
         listSparseProjectItems.add(sparseProjectItem);
-        sparseProjectItems = new PageImpl<>(listSparseProjectItems, pageRequest, 1);
+        sparseProjectItems = new CustomPageImpl<>();
+        sparseProjectItems.setContent(listSparseProjectItems);
+        sparseProjectItems.setNumber(0);
+        sparseProjectItems.setSize(20);
+        sparseProjectItems.setTotalElements(1);
+        sparseProjectItemsJSON = objectMapper.writeValueAsString(sparseProjectItems);
 
         sparseEmployeeDetailItem = new SparseEmployeeDetailItem(1, "Karl");
         List<SparseEmployeeDetailItem> listSparseEmployeeDetailItems = new ArrayList<>();
         listSparseEmployeeDetailItems.add(sparseEmployeeDetailItem);
-        sparseEmployeeDetailItems = new PageImpl<>(listSparseEmployeeDetailItems, pageRequest, 1);
+        sparseEmployeeDetailItems = new CustomPageImpl<>();
+        sparseEmployeeDetailItems.setContent(listSparseEmployeeDetailItems);
+        sparseEmployeeDetailItems.setNumber(0);
+        sparseEmployeeDetailItems.setSize(20);
+        sparseEmployeeDetailItems.setTotalElements(1L);
         
         sparseEmployeeDetailItemsJSON = objectMapper.writeValueAsString(sparseEmployeeDetailItems);
 
@@ -129,14 +123,13 @@ public class EmployeeInfoControllerTest {
         projectItems = new ArrayList<>();
         projectItem = new ProjectItem(1, "Test Project Name", "Test Project Techstack");
         projectItems.add(projectItem);
-        sparseProjectItemsJSON = objectMapper.writeValueAsString(projectItems);
         
         server = MockRestServiceServer.createServer(restTemplate);
     }
 
     @Test
     public void testGet() throws Exception {
-        server.expect(requestTo(EmployeeDetailController.serviceUrl + "/employees")).andExpect(method(HttpMethod.GET))
+        server.expect(requestTo(EmployeeDetailController.serviceUrl + "/employee/detail/employees")).andExpect(method(HttpMethod.GET))
         .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(sparseEmployeeDetailItemsJSON));
 
         mvc.perform(get("/info/employees").accept(MediaType.APPLICATION_JSON_VALUE))

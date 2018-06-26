@@ -33,7 +33,7 @@ public class EmployeeDetailController {
     @Autowired
     private EmployeeDetailResourceAssembler assembler;
     
-    protected static final String serviceUrl = "http://EmployeeDetail"; // EmployeeAddress is the name of the microservice we're calling
+    public static final String serviceUrl = "http://EmployeeDetail"; // EmployeeAddress is the name of the microservice we're calling
 
     @GetMapping(value="", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResourceSupport> getApi() {

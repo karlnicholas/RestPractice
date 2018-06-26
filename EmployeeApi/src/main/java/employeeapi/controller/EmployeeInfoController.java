@@ -3,6 +3,7 @@ package employeeapi.controller;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
@@ -29,7 +31,6 @@ import org.springframework.web.client.RestTemplate;
 import employeeaddress.item.EmployeeAddressItem;
 import employeeapi.resource.EmployeeInfoResource;
 import employeeapi.resource.EmployeeInfoResourceAssembler;
-import employeeapi.resource.EmployeeProjectResourceAssembler;
 import employeeapi.resource.SparseEmployeeDetailResource;
 import employeeapi.resource.SparseEmployeeDetailResourceAssembler;
 import employeeapi.resource.SparseProjectResource;
@@ -37,7 +38,7 @@ import employeeapi.resource.SparseProjectResourceAssembler;
 import employeeapi.service.EmployeeInfoService;
 import employeedetail.item.EmployeeDetailItem;
 import employeedetail.item.SparseEmployeeDetailItem;
-import employeeproject.item.EmployeeProjectItem;
+import employeeutil.CustomPageImpl;
 import project.item.ProjectItem;
 import project.item.SparseProjectItem;
 
@@ -70,12 +71,19 @@ public class EmployeeInfoController {
             Pageable pageable, 
             PagedResourcesAssembler<SparseEmployeeDetailItem> pagedResourcesAssembler        
     ) {
-        ResponseEntity<Page<SparseEmployeeDetailItem>> idsResponse = restTemplate.exchange(
-            EmployeeDetailController.serviceUrl + "/employees",
-            HttpMethod.GET, null, new ParameterizedTypeReference<Page<SparseEmployeeDetailItem>>() {}, pageable);
+        ResponseEntity<CustomPageImpl<SparseEmployeeDetailItem>> idsResponse = restTemplate.exchange(
+                EmployeeDetailController.serviceUrl + "/employee/detail/employees",
+                HttpMethod.GET, null, new ParameterizedTypeReference<CustomPageImpl<SparseEmployeeDetailItem>>() {}, pageable);
+
+        CustomPageImpl<SparseEmployeeDetailItem> items = idsResponse.getBody();
+
+        List<SparseEmployeeDetailItem> list = new ArrayList<>(items.getContent());
+
+        Page<SparseEmployeeDetailItem> page = new PageImpl<SparseEmployeeDetailItem>(list, pageable, 0);
 
         PagedResources<SparseEmployeeDetailResource> pagedResources 
-            = pagedResourcesAssembler.toResource(idsResponse.getBody(), sparseEmployeeAssembler);        
+           = pagedResourcesAssembler.toResource(page, sparseEmployeeAssembler);        
+
         return new ResponseEntity<>(pagedResources, HttpStatus.OK);
     }
     
@@ -84,15 +92,23 @@ public class EmployeeInfoController {
         Pageable pageable, 
         PagedResourcesAssembler<SparseProjectItem> pagedResourcesAssembler        
     ) {
-        ResponseEntity<Page<SparseProjectItem>> idsResponse = restTemplate.exchange(
-            EmployeeDetailController.serviceUrl + "/projects",
-            HttpMethod.GET, null, new ParameterizedTypeReference<Page<SparseProjectItem>>() {}, pageable);
+        ResponseEntity<CustomPageImpl<SparseProjectItem>> idsResponse = restTemplate.exchange(
+                EmployeeProjectController.serviceUrl + "/projects",
+                HttpMethod.GET, null, new ParameterizedTypeReference<CustomPageImpl<SparseProjectItem>>() {}, pageable);
+
+        CustomPageImpl<SparseProjectItem> items = idsResponse.getBody();
+
+        List<SparseProjectItem> list = new ArrayList<>(items.getContent());
+
+        Page<SparseProjectItem> page = new PageImpl<SparseProjectItem>(list, pageable, 0);
+
         PagedResources<SparseProjectResource> pagedResources 
-            = pagedResourcesAssembler.toResource(idsResponse.getBody(), sparseProjectAssembler);        
+           = pagedResourcesAssembler.toResource(page, sparseProjectAssembler);        
+
         return new ResponseEntity<>(pagedResources, HttpStatus.OK);
     }
-/*
-    @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
+
+    @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)    
     public ResponseEntity<EmployeeInfoResource> getEmployeeInfo(@PathVariable("empId") Integer empId) {
         logger.debug("empId = " + empId);
         try {
@@ -115,5 +131,5 @@ public class EmployeeInfoController {
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).build();
         }
     }
-*/    
+    
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import employeedetail.model.EmployeeDetail;
 import employeedetail.service.EmployeeDetailRepository;
+import employeeutil.CustomPageImpl;
 import employeedetail.item.EmployeeDetailItem;
 import employeedetail.item.SparseEmployeeDetailItem;
 
@@ -30,8 +31,14 @@ public class EmployeeDetailController {
     private static final Logger logger = LoggerFactory.getLogger(EmployeeDetailController.class);
     
     @GetMapping(value="/employees", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<SparseEmployeeDetailItem>> findAllBy(Pageable pageable) {
-        return ResponseEntity.ok(repository.findAllBy(pageable));
+    public ResponseEntity<CustomPageImpl<SparseEmployeeDetailItem>> findAllBy(Pageable pageable) {
+        Page<SparseEmployeeDetailItem> r = repository.findAllBy(pageable);
+        CustomPageImpl<SparseEmployeeDetailItem> p = new CustomPageImpl<>();
+        p.setContent(r.getContent());
+        p.setNumber(r.getNumber());
+        p.setSize(r.getSize());
+        p.setTotalElements(r.getTotalElements());
+        return ResponseEntity.ok(p);
     }
     
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)

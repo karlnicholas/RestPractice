@@ -89,22 +89,9 @@ public class ProjectTest {
 //      .andDo(print())    
         .andExpect(jsonPath("$.content[0].projectId", is(1)))    
         .andExpect(jsonPath("$.content[0].projectName", is("Test Name")))
-        .andExpect(jsonPath("$.pageable.sort.sorted", is(false)))
-        .andExpect(jsonPath("$.pageable.sort.unsorted", is(true)))
-        .andExpect(jsonPath("$.pageable.offset", is(0)))
-        .andExpect(jsonPath("$.pageable.pageSize", is(20)))
-        .andExpect(jsonPath("$.pageable.unpaged", is(false)))
-        .andExpect(jsonPath("$.pageable.paged", is(true)))
-        .andExpect(jsonPath("$.pageable.paged", is(true)))
-        .andExpect(jsonPath("$.totalElements", is(1)))
-        .andExpect(jsonPath("$.last", is(true)))
-        .andExpect(jsonPath("$.totalPages", is(1)))
         .andExpect(jsonPath("$.size", is(20)))
         .andExpect(jsonPath("$.number", is(0)))
-        .andExpect(jsonPath("$.sort.sorted", is(false)))
-        .andExpect(jsonPath("$.sort.unsorted", is(true)))
-        .andExpect(jsonPath("$.numberOfElements", is(1)))
-        .andExpect(jsonPath("$.first", is(true)));
+        .andExpect(jsonPath("$.totalElements", is(1)));
     }
 
     @Test
