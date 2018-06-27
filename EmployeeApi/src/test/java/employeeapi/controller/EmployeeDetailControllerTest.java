@@ -64,7 +64,7 @@ public class EmployeeDetailControllerTest {
         employeeDetailItem.setRole("Technical Analyst");
         employeeDetailItem.setRoleDescription("Analyze Technicals");
         employeeDetailItemJSON = objectMapper.writeValueAsString(employeeDetailItem);
-        server = MockRestServiceServer.createServer(restTemplate);
+        server = MockRestServiceServer.bindTo(restTemplate).build();
     }
 
     private void testPackage(ResultActions r) throws Exception {

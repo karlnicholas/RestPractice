@@ -67,7 +67,7 @@ public class EmployeeProjectControllerTest {
         employeeProjectItems = new ArrayList<>();
         employeeProjectItems.add(employeeProjectItem);
         employeeProjectItemsJSON = objectMapper.writeValueAsString(employeeProjectItems);
-        server = MockRestServiceServer.createServer(restTemplate);
+        server = MockRestServiceServer.bindTo(restTemplate).build();
     }
 
     private void testPackage(ResultActions r) throws Exception {

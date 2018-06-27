@@ -118,11 +118,11 @@ public class EmployeeInfoController {
                 = employeeInfoService.getEmployeeDetail(empId);
             CompletableFuture<List<ProjectItem>> employeeProjectFuture 
                 = employeeInfoService.getEmployeeProjects(empId);
-            EmployeeInfoResource employeeInfo = new EmployeeInfoResource(
-                employeeAddressFuture.get(),  
-                employeeDetailFuture.get(), 
-                employeeProjectFuture.get()
-            );
+            
+            EmployeeAddressItem a = employeeAddressFuture.get();  
+            EmployeeDetailItem d = employeeDetailFuture.get();
+            List<ProjectItem> p = employeeProjectFuture.get();            
+            EmployeeInfoResource employeeInfo = new EmployeeInfoResource(a, d, p);
             
             return ResponseEntity.ok(assembler.toResource(employeeInfo));
             

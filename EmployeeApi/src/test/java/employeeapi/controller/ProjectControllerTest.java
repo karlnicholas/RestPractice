@@ -57,7 +57,7 @@ public class ProjectControllerTest {
     public void setup() throws JsonProcessingException {
         projectItem = new ProjectItem(1, "Test Project", "Test Techstack");
         projectItemJSON = objectMapper.writeValueAsString(projectItem);
-        server = MockRestServiceServer.createServer(restTemplate);
+        server = MockRestServiceServer.bindTo(restTemplate).build();
     }
 
     private void testPackage(ResultActions r) throws Exception {

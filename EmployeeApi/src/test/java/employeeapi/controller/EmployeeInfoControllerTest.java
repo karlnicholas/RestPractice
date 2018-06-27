@@ -65,9 +65,12 @@ public class EmployeeInfoControllerTest {
     private MockRestServiceServer server;
     
     private EmployeeAddressItem employeeAddressItem;
+    private String employeeAddressItemJSON;
     private EmployeeDetailItem employeeDetailItem;
+    private String employeeDetailItemJSON;
     private ProjectItem projectItem;
     private List<ProjectItem> projectItems;
+    private String projectItemsJSON;
 
     private SparseProjectItem sparseProjectItem;
     private CustomPageImpl<SparseProjectItem> sparseProjectItems;
@@ -109,6 +112,7 @@ public class EmployeeInfoControllerTest {
         employeeAddressItem.setAddress4("Address 4");
         employeeAddressItem.setState("AZ");
         employeeAddressItem.setCountry("US");
+        employeeAddressItemJSON = objectMapper.writeValueAsString(employeeAddressItem);
         //
         employeeDetailItem = new EmployeeDetailItem();
         employeeDetailItem.setEmpId(1);
@@ -116,6 +120,7 @@ public class EmployeeInfoControllerTest {
         employeeDetailItem.setRole("4");
         employeeDetailItem.setRoleDescription("Technical Analyst");
         employeeDetailItem.setSalary(new BigDecimal("100000.00"));
+        employeeDetailItemJSON = objectMapper.writeValueAsString(employeeDetailItem);
 //        sparseEmployeeDetailItem = new SparseEmployeeDetailItem(1, "Karl");
 //        sparseEmployeeDetailItems = Page.empty();
 //        sparseEmployeeDetailItems.add(sparseEmployeeDetailItem);
@@ -123,10 +128,11 @@ public class EmployeeInfoControllerTest {
         projectItems = new ArrayList<>();
         projectItem = new ProjectItem(1, "Test Project Name", "Test Project Techstack");
         projectItems.add(projectItem);
+        projectItemsJSON = objectMapper.writeValueAsString(projectItems);
         
-        server = MockRestServiceServer.createServer(restTemplate);
+        server = MockRestServiceServer.bindTo(restTemplate).build();
     }
-
+/*
     @Test
     public void testGet() throws Exception {
         server.expect(requestTo(EmployeeDetailController.serviceUrl + "/employee/detail/employees")).andExpect(method(HttpMethod.GET))
@@ -162,12 +168,18 @@ public class EmployeeInfoControllerTest {
         .andExpect(jsonPath("$.page.totalPages", is(1)))
         .andExpect(jsonPath("$.page.number", is(0)));
     }
-/*
+*/
+
     @Test
     public void testEmployee() throws Exception {
-        when(employeeAddressClient.getEmployeeAddress(1)).thenReturn(ResponseEntity.ok(employeeAddressItem));
-        when(employeeDetailClient.getEmployeeDetail(1)).thenReturn(ResponseEntity.ok(employeeDetailItem));
-        when(employeeProjectsClient.getEmployeeProjectsFull(1)).thenReturn(ResponseEntity.ok(projectItems));
+       server.expect(requestTo(EmployeeAddressController.serviceUrl + "/employee/address/1")).andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeAddressItemJSON));
+        
+        server.expect(requestTo(EmployeeDetailController.serviceUrl + "/employee/detail/1")).andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeDetailItemJSON));
+       
+        server.expect(requestTo(EmployeeProjectsController.serviceUrl + "/employee/projects/1")).andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(projectItemsJSON));
 
         mvc.perform(get("/info/1").accept(MediaType.APPLICATION_JSON_VALUE))
 //            .andDo(print())    
@@ -190,5 +202,5 @@ public class EmployeeInfoControllerTest {
             .andExpect(jsonPath("$._links.self.href", is("http://localhost/info/1")))
             .andReturn();
     }
-*/
+
 }
