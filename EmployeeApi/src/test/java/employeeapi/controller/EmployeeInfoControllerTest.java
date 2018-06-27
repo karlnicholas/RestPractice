@@ -130,9 +130,9 @@ public class EmployeeInfoControllerTest {
         projectItems.add(projectItem);
         projectItemsJSON = objectMapper.writeValueAsString(projectItems);
         
-        server = MockRestServiceServer.bindTo(restTemplate).build();
+        server = MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build();
     }
-/*
+
     @Test
     public void testGet() throws Exception {
         server.expect(requestTo(EmployeeDetailController.serviceUrl + "/employee/detail/employees")).andExpect(method(HttpMethod.GET))
@@ -168,7 +168,6 @@ public class EmployeeInfoControllerTest {
         .andExpect(jsonPath("$.page.totalPages", is(1)))
         .andExpect(jsonPath("$.page.number", is(0)));
     }
-*/
 
     @Test
     public void testEmployee() throws Exception {

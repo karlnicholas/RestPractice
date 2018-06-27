@@ -47,7 +47,7 @@ public class EmployeeAddressControllerTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private RestTemplate restTemplate;
+    protected RestTemplate restTemplate;
     private MockRestServiceServer server;
     
     private EmployeeAddressItem employeeAddressItem;
