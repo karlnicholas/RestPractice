@@ -17,9 +17,9 @@ public class EmployeeApiController {
     public ResponseEntity<ResourceSupport> getApi() {
         ResourceSupport resource = new ResourceSupport();
         resource.add( linkTo(methodOn(EmployeeAddressController.class).getApi()).withRel("address") );
-//        resource.add( linkTo(methodOn(EmployeeDetailController.class).getApi()).withRel("detail") );
-//        resource.add( linkTo(methodOn(EmployeeProjectController.class).getApi()).withRel("project") );
-//        resource.add( linkTo(methodOn(EmployeeProjectsController.class).getApi()).withRel("projects") );
+        resource.add( linkTo(methodOn(EmployeeDetailController.class).getApi()).withRel("detail") );
+        resource.add( linkTo(methodOn(EmployeeProjectController.class).getApi()).withRel("project") );
+        resource.add( linkTo(methodOn(EmployeeProjectsController.class).getApi()).withRel("projects") );
         return ResponseEntity.ok(resource);
     }
 

@@ -54,7 +54,7 @@ public class EmployeeProjectController {
     @GetMapping(value="/{empId}", produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Resources<EmployeeProjectResource>> getEmployeeProjects(@PathVariable Integer empId ) {
         Link linkSelf = linkTo(methodOn(EmployeeProjectController.class).getEmployeeProjects(empId)).slash('/').withSelfRel();
-        Link linkCreate = linkTo(methodOn(EmployeeProjectController.class).postEmployeeProject(null)).withRel("create");
+//        Link linkCreate = linkTo(methodOn(EmployeeProjectController.class).postEmployeeProject(null)).withRel("create");
 
         ResponseEntity<List<EmployeeProjectItem>> idsResponse = restTemplate.exchange(serviceUrl + "/employee/project/{empId}",
                 HttpMethod.GET, null, new ParameterizedTypeReference<List<EmployeeProjectItem>>() {}, empId);
@@ -64,7 +64,7 @@ public class EmployeeProjectController {
             resources.add( assembler.toResource(item));
         }
         //Wrap your resources in a Resources object.
-        Resources<EmployeeProjectResource> resourceList = new Resources<EmployeeProjectResource>(resources, linkSelf, linkCreate);
+        Resources<EmployeeProjectResource> resourceList = new Resources<EmployeeProjectResource>(resources, linkSelf);
 
         return new ResponseEntity<Resources<EmployeeProjectResource>>(resourceList, HttpStatus.OK);    
     }

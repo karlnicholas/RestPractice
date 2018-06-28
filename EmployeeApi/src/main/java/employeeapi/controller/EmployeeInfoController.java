@@ -62,7 +62,7 @@ public class EmployeeInfoController {
         ResourceSupport resource = new ResourceSupport();
         resource.add( linkTo(methodOn(EmployeeInfoController.class).getEmployees(null, null)).withRel("employees") );
         resource.add( linkTo(methodOn(EmployeeInfoController.class).getProjects(null, null)).withRel("projects") );
-//        resource.add( linkTo(methodOn(EmployeeInfoController.class).getEmployeeInfo(null)).withRel("empId"));
+        resource.add( linkTo(methodOn(EmployeeInfoController.class).getEmployeeInfo(null)).withRel("empId"));
         return ResponseEntity.ok(resource);
     }
     
@@ -93,7 +93,7 @@ public class EmployeeInfoController {
         PagedResourcesAssembler<SparseProjectItem> pagedResourcesAssembler        
     ) {
         ResponseEntity<CustomPageImpl<SparseProjectItem>> idsResponse = restTemplate.exchange(
-                EmployeeProjectController.serviceUrl + "/projects",
+                ProjectController.serviceUrl + "/project/projects",
                 HttpMethod.GET, null, new ParameterizedTypeReference<CustomPageImpl<SparseProjectItem>>() {}, pageable);
 
         CustomPageImpl<SparseProjectItem> items = idsResponse.getBody();

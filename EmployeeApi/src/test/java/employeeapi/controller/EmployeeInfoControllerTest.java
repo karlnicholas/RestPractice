@@ -45,16 +45,6 @@ import java.util.List;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-/*
-@RunWith(SpringRunner.class)
-@WebMvcTest(EmployeeInfoController.class)
-@Import({
-    EmployeeInfoResourceAssembler.class, 
-    EmployeeInfoService.class, 
-    SparseEmployeeDetailResourceAssembler.class,
-    SparseProjectResourceAssembler.class, 
-})
-*/
 public class EmployeeInfoControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
@@ -153,7 +143,7 @@ public class EmployeeInfoControllerTest {
 
     @Test
     public void testGetProjects() throws Exception {
-        server.expect(requestTo(EmployeeProjectController.serviceUrl + "/projects")).andExpect(method(HttpMethod.GET))
+        server.expect(requestTo(ProjectController.serviceUrl + "/project/projects")).andExpect(method(HttpMethod.GET))
         .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(sparseProjectItemsJSON));
 
         mvc.perform(get("/info/projects").accept(MediaType.APPLICATION_JSON_VALUE))

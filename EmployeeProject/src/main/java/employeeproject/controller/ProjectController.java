@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import employeedetail.item.SparseEmployeeDetailItem;
 import project.item.SparseProjectItem;
 import employeeproject.model.Project;
 import employeeproject.service.ProjectRepository;
