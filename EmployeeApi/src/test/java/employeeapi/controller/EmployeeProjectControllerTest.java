@@ -89,8 +89,7 @@ public class EmployeeProjectControllerTest {
         .andExpect(jsonPath("$._embedded.employeeProjectResourceList[0].empId", is(1)))    
         .andExpect(jsonPath("$._embedded.employeeProjectResourceList[0].projectId", is(1)))
         .andExpect(jsonPath("$._embedded.employeeProjectResourceList[0]._links.delete.href", is("http://localhost/employee/project/delete/1/1")))
-        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/project/1")))
-        .andExpect(jsonPath("$._links.create.href", is("http://localhost/employee/project/create")));
+        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/project/1")));
     }
 
     @Test

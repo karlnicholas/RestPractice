@@ -68,8 +68,6 @@ public class ProjectControllerTest {
         .andExpect(jsonPath("$.projectName", is("Test Project")))    
         .andExpect(jsonPath("$.techstack", is("Test Techstack")))
         .andExpect(jsonPath("$._links.self.href", is("http://localhost/project/1")))
-        .andExpect(jsonPath("$._links.create.href", is("http://localhost/project/create")))
-        .andExpect(jsonPath("$._links.update.href", is("http://localhost/project/update")))
         .andExpect(jsonPath("$._links.delete.href", is("http://localhost/project/delete/1")));
     }
 

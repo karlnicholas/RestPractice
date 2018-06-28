@@ -77,9 +77,7 @@ public class EmployeeDetailControllerTest {
         .andExpect(jsonPath("$.role", is("Technical Analyst")))
         .andExpect(jsonPath("$.roleDescription", is("Analyze Technicals")))
         .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/detail/1")))
-        .andExpect(jsonPath("$._links.delete.href", is("http://localhost/employee/detail/delete/1")))
-        .andExpect(jsonPath("$._links.update.href", is("http://localhost/employee/detail/update")))
-        .andExpect(jsonPath("$._links.create.href", is("http://localhost/employee/detail/create")));
+        .andExpect(jsonPath("$._links.delete.href", is("http://localhost/employee/detail/delete/1")));
     }
 
     @Test
