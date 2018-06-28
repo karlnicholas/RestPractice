@@ -26,7 +26,7 @@
         <module>EmployeeProject</module>
         <module>EmployeeApi</module>
         <module>EmployeeEureka</module>
-        
+
     </modules>
     <repositories>
         <repository>
