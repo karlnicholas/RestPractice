@@ -8,7 +8,7 @@ Technologies used:
 * Spring JPA
 * Spring Rest
 * Spring Netflix Eureka
-* Spring Feign Client
+* Spring RestTemplate
 * Spring Ribbon Load Balancer
 * Spring Hateoas Support
 * Spring Async Services
