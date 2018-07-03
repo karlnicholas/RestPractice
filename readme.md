@@ -1,11 +1,31 @@
 Example application for REST based micro-services architecture. 
 
-Uses SpringBoot for individual services, gateway, and registry.
+Microservices are 
+
+* EmployeeAddress
+* EmployeeDetail
+* EmployeeProject
+
+Registry is Spring/Netflix Eureka at EmployeeEureka
+
+Client facing REST interface/Gateway is at EmployeeApi.
+
+Shows by example 
+
+* Async calls to microservices.
+* Random service port assignment and load balancing.
+* Hateoas as implemented by SpringFramework.
+* Currently includes swagger. Looking at spring docs
+* Spring projection to sparse lists of projects and employees.
+* Support (partial) for Pageable lists.
+* Maven parent project
+* Mocked unit testing of microservices and gateway
+* SpringBoot for services, gateway, and registry.
 
 Technologies used:
 
 * Spring Boot
-* Spring JPA
+* Spring Data JPA
 * Spring Rest
 * Spring Netflix Eureka
 * Spring RestTemplate
@@ -13,4 +33,5 @@ Technologies used:
 * Spring Hateoas Support
 * Spring Async Services
 * Spring WebMvc 
-* Spring Mock 
+* Spring MockMvc
+* Spring MockRestTemlateServer
