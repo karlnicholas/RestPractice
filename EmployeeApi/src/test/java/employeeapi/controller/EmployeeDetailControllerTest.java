@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import employeedetail.item.EmployeeDetailItem;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
@@ -41,6 +43,7 @@ import java.math.BigDecimal;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs(uriPort = 80)
 @ActiveProfiles("test")
 public class EmployeeDetailControllerTest {
     @Autowired
@@ -67,7 +70,7 @@ public class EmployeeDetailControllerTest {
         server = MockRestServiceServer.bindTo(restTemplate).build();
     }
 
-    private void testPackage(ResultActions r) throws Exception {
+    private ResultActions testPackage(ResultActions r) throws Exception {
         r.andExpect(status().isOk())
         .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
 //      .andDo(print())    
@@ -78,6 +81,7 @@ public class EmployeeDetailControllerTest {
         .andExpect(jsonPath("$.roleDescription", is("Analyze Technicals")))
         .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/detail/1")))
         .andExpect(jsonPath("$._links.delete.href", is("http://localhost/employee/detail/delete/1")));
+        return r;
     }
 
     @Test
@@ -86,7 +90,7 @@ public class EmployeeDetailControllerTest {
         .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeDetailItemJSON));
         testPackage(
             mvc.perform(get("/employee/detail/1").accept(MediaType.APPLICATION_JSON_VALUE))
-        );
+        ).andDo(document("get-employee-detail"));
     }
 
     @Test
@@ -99,7 +103,7 @@ public class EmployeeDetailControllerTest {
                 .content(employeeDetailItemJSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
-        );
+        ).andDo(document("create-employee-detail"));
     }
 
     @Test
@@ -112,7 +116,7 @@ public class EmployeeDetailControllerTest {
                 .content(employeeDetailItemJSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
-        );
+        ).andDo(document("update-employee-detail"));
     }
 
     @Test
@@ -122,7 +126,8 @@ public class EmployeeDetailControllerTest {
         mvc.perform(delete("/employee/detail/delete/1"))
 //      .andDo(print())    
         .andExpect(status().isOk())
-        .andExpect(content().string("OK"));    
+        .andExpect(content().string("OK"))
+        .andDo(document("delete-employee-detail"));    
     }
 
 }

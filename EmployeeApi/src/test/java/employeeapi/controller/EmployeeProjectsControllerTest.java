@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import project.item.ProjectItem;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
@@ -38,6 +40,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs(uriPort = 80)
 @ActiveProfiles("test")
 public class EmployeeProjectsControllerTest {
     @Autowired
@@ -72,7 +75,8 @@ public class EmployeeProjectsControllerTest {
         .andExpect(jsonPath("$._embedded.projectResourceList[0].techstack", is("Test Techstack")))
         .andExpect(jsonPath("$._embedded.projectResourceList[0]._links.self.href", is("http://localhost/project/1")))
         .andExpect(jsonPath("$._embedded.projectResourceList[0]._links.delete.href", is("http://localhost/project/delete/1")))
-        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/projects/1")));
+        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/projects/1")))
+        .andDo(document("get-employee-projects"));
     }    
 
 }

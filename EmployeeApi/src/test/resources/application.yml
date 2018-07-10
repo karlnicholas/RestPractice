@@ -2,7 +2,7 @@ spring:
   application:
     name: EmployeeApi
 server:
-  port: 8080
+  port: -1
 eureka:
   client:
     enabled: false

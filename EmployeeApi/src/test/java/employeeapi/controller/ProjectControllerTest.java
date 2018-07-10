@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import project.item.ProjectItem;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
@@ -40,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs(uriPort = 80)
 @ActiveProfiles("test")
 public class ProjectControllerTest {
     @Autowired
@@ -60,7 +63,7 @@ public class ProjectControllerTest {
         server = MockRestServiceServer.bindTo(restTemplate).build();
     }
 
-    private void testPackage(ResultActions r) throws Exception {
+    private ResultActions testPackage(ResultActions r) throws Exception {
         r.andExpect(status().isOk())
         .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
 //      .andDo(print())    
@@ -69,6 +72,7 @@ public class ProjectControllerTest {
         .andExpect(jsonPath("$.techstack", is("Test Techstack")))
         .andExpect(jsonPath("$._links.self.href", is("http://localhost/project/1")))
         .andExpect(jsonPath("$._links.delete.href", is("http://localhost/project/delete/1")));
+        return r;
     }
 
     @Test
@@ -77,7 +81,7 @@ public class ProjectControllerTest {
         .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(projectItemJSON));
         testPackage(
             mvc.perform(get("/project/1").accept(MediaType.APPLICATION_JSON_VALUE))
-        );
+        ).andDo(document("get-project"));
     }
 
     @Test
@@ -90,7 +94,7 @@ public class ProjectControllerTest {
                 .content(projectItemJSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
-        );
+        ).andDo(document("create-project"));
     }
 
     @Test
@@ -103,7 +107,7 @@ public class ProjectControllerTest {
                 .content(projectItemJSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
-        );
+        ).andDo(document("update-project"));
     }
 
     @Test
@@ -113,7 +117,8 @@ public class ProjectControllerTest {
         mvc.perform(delete("/project/delete/1"))
 //      .andDo(print())    
         .andExpect(status().isOk())
-        .andExpect(content().string("OK"));    
+        .andExpect(content().string("OK"))
+        .andDo(document("delete-project"));    
     }
         
 }

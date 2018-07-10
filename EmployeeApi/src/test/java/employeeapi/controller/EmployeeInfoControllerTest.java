@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +29,7 @@ import employeeutil.CustomPageImpl;
 import project.item.ProjectItem;
 import project.item.SparseProjectItem;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
@@ -44,6 +46,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs(uriPort = 80)
 @ActiveProfiles("test")
 public class EmployeeInfoControllerTest {
     @Autowired
@@ -138,7 +141,8 @@ public class EmployeeInfoControllerTest {
         .andExpect(jsonPath("$.page.size", is(20)))
         .andExpect(jsonPath("$.page.totalElements", is(1)))
         .andExpect(jsonPath("$.page.totalPages", is(1)))
-        .andExpect(jsonPath("$.page.number", is(0)));
+        .andExpect(jsonPath("$.page.number", is(0)))
+        .andDo(document("get-employee-detail-employees"));
     }
 
     @Test
@@ -156,7 +160,8 @@ public class EmployeeInfoControllerTest {
         .andExpect(jsonPath("$.page.size", is(20)))
         .andExpect(jsonPath("$.page.totalElements", is(1)))
         .andExpect(jsonPath("$.page.totalPages", is(1)))
-        .andExpect(jsonPath("$.page.number", is(0)));
+        .andExpect(jsonPath("$.page.number", is(0)))
+        .andDo(document("get-project-projects"));
     }
 
     @Test
@@ -189,6 +194,7 @@ public class EmployeeInfoControllerTest {
             .andExpect(jsonPath("$.projects[0].projectName", is("Test Project Name")))
             .andExpect(jsonPath("$.projects[0].techstack", is("Test Project Techstack")))
             .andExpect(jsonPath("$._links.self.href", is("http://localhost/info/1")))
+            .andDo(document("get-employee-projects"))
             .andReturn();
     }
 

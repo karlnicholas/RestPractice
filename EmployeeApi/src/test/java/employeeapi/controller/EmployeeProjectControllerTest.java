@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import employeeproject.item.EmployeeProjectItem;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
@@ -43,6 +45,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs(uriPort = 80)
 @ActiveProfiles("test")
 public class EmployeeProjectControllerTest {
     @Autowired
@@ -70,13 +73,14 @@ public class EmployeeProjectControllerTest {
         server = MockRestServiceServer.bindTo(restTemplate).build();
     }
 
-    private void testPackage(ResultActions r) throws Exception {
+    private ResultActions testPackage(ResultActions r) throws Exception {
         r.andExpect(status().isOk())
         .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
 //      .andDo(print())    
         .andExpect(jsonPath("$.empId", is(1)))    
         .andExpect(jsonPath("$.projectId", is(1)))    
         .andExpect(jsonPath("$._links.delete.href", is("http://localhost/employee/project/delete/1/1")));
+        return r;
     }
 
     @Test
@@ -89,7 +93,8 @@ public class EmployeeProjectControllerTest {
         .andExpect(jsonPath("$._embedded.employeeProjectResourceList[0].empId", is(1)))    
         .andExpect(jsonPath("$._embedded.employeeProjectResourceList[0].projectId", is(1)))
         .andExpect(jsonPath("$._embedded.employeeProjectResourceList[0]._links.delete.href", is("http://localhost/employee/project/delete/1/1")))
-        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/project/1")));
+        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/project/1")))
+        .andDo(document("get-employee-project"));
     }
 
     @Test
@@ -102,7 +107,7 @@ public class EmployeeProjectControllerTest {
                 .content(employeeProjectItemJSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
-        );
+        ).andDo(document("create-employee-project"));
     }
 
     @Test
@@ -115,7 +120,7 @@ public class EmployeeProjectControllerTest {
                 .content(employeeProjectItemJSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
-        );
+        ).andDo(document("update-employee-project"));
     }
 
     @Test
@@ -125,7 +130,8 @@ public class EmployeeProjectControllerTest {
         mvc.perform(delete("/employee/project/delete/1/1"))
 //      .andDo(print())    
         .andExpect(status().isOk())
-        .andExpect(content().string("OK"));    
+        .andExpect(content().string("OK"))
+        .andDo(document("delete-employee-project"));
     }
         
 }

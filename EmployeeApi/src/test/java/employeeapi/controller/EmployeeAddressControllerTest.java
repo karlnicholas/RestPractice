@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import employeeaddress.item.EmployeeAddressItem;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
@@ -36,16 +38,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs(uriPort = 80)
 @ActiveProfiles("test")
 public class EmployeeAddressControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private MockMvc mvc;
+    private MockMvc mockMvc;
     @Autowired
     protected RestTemplate restTemplate;
     private MockRestServiceServer server;
@@ -64,10 +66,12 @@ public class EmployeeAddressControllerTest {
         employeeAddressItem.setState("AZ");
         employeeAddressItem.setCountry("US");
         employeeAddressItemJSON = objectMapper.writeValueAsString(employeeAddressItem);
-        server = MockRestServiceServer.bindTo(restTemplate).build();
+        server = MockRestServiceServer
+                .bindTo(restTemplate)
+                .build();
     }
 
-    private void testPackage(ResultActions r) throws Exception {
+    private ResultActions testPackage(ResultActions r) throws Exception {
         r.andExpect(status().isOk())
         .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
 //      .andDo(print())    
@@ -80,6 +84,7 @@ public class EmployeeAddressControllerTest {
         .andExpect(jsonPath("$.country", is("US")))
         .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/address/1")))
         .andExpect(jsonPath("$._links.delete.href", is("http://localhost/employee/address/delete/1")));
+        return r;
     }
 
     @Test
@@ -87,8 +92,8 @@ public class EmployeeAddressControllerTest {
         server.expect(requestTo(EmployeeAddressController.serviceUrl + "/employee/address/1")).andExpect(method(HttpMethod.GET))
         .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeAddressItemJSON));
         testPackage(
-                mvc.perform(get("/employee/address/1").accept(MediaType.APPLICATION_JSON_VALUE))
-            );
+                mockMvc.perform(get("/employee/address/1").accept(MediaType.APPLICATION_JSON_VALUE))
+            ).andDo(document("get-employee-address"));
     }
 
     @Test
@@ -96,12 +101,12 @@ public class EmployeeAddressControllerTest {
         server.expect(requestTo(EmployeeAddressController.serviceUrl + "/employee/address/create")).andExpect(method(HttpMethod.POST))
         .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeAddressItemJSON));
         testPackage(
-            mvc.perform(post("/employee/address/create")
+            mockMvc.perform(post("/employee/address/create")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(employeeAddressItemJSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
-        );
+        ).andDo(document("create-employee-address"));
     }
 
     @Test
@@ -109,22 +114,23 @@ public class EmployeeAddressControllerTest {
         server.expect(requestTo(EmployeeAddressController.serviceUrl + "/employee/address/update")).andExpect(method(HttpMethod.PUT))
         .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeAddressItemJSON));
         testPackage(
-            mvc.perform(put("/employee/address/update")
+            mockMvc.perform(put("/employee/address/update")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(employeeAddressItemJSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             )
-        );
+        ).andDo(document("update-employee-address"));
     }
 
     @Test
     public void testDelete() throws Exception {
         server.expect(requestTo(EmployeeAddressController.serviceUrl + "/employee/address/delete/1")).andExpect(method(HttpMethod.DELETE))
         .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.TEXT_PLAIN).body(HttpStatus.OK.name()));
-        mvc.perform(delete("/employee/address/delete/1"))
+        mockMvc.perform(delete("/employee/address/delete/1"))
 //      .andDo(print())    
         .andExpect(status().isOk())
-        .andExpect(content().string("OK"));    
+        .andExpect(content().string("OK"))
+        .andDo(document("delete-employee-address"));    
     }
         
 }
