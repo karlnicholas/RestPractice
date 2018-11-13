@@ -70,12 +70,9 @@ public class EmployeeProjectsControllerTest {
         mvc.perform(get("/employee/projects/1").accept(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isOk())
         .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
-        .andExpect(jsonPath("$._embedded.projectResourceList[0].projectId", is(1)))
-        .andExpect(jsonPath("$._embedded.projectResourceList[0].projectName", is("Test Project")))
-        .andExpect(jsonPath("$._embedded.projectResourceList[0].techstack", is("Test Techstack")))
-        .andExpect(jsonPath("$._embedded.projectResourceList[0]._links.self.href", is("http://localhost/project/1")))
-        .andExpect(jsonPath("$._embedded.projectResourceList[0]._links.delete.href", is("http://localhost/project/delete/1")))
-        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/projects/1")))
+        .andExpect(jsonPath("$.[0].projectId", is(1)))
+        .andExpect(jsonPath("$.[0].projectName", is("Test Project")))
+        .andExpect(jsonPath("$.[0].techstack", is("Test Techstack")))
         .andDo(document("get-employee-projects"));
     }    
 

@@ -69,9 +69,7 @@ public class ProjectControllerTest {
 //      .andDo(print())    
         .andExpect(jsonPath("$.projectId", is(1)))
         .andExpect(jsonPath("$.projectName", is("Test Project")))    
-        .andExpect(jsonPath("$.techstack", is("Test Techstack")))
-        .andExpect(jsonPath("$._links.self.href", is("http://localhost/project/1")))
-        .andExpect(jsonPath("$._links.delete.href", is("http://localhost/project/delete/1")));
+        .andExpect(jsonPath("$.techstack", is("Test Techstack")));
         return r;
     }
 

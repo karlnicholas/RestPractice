@@ -78,9 +78,7 @@ public class EmployeeDetailControllerTest {
         .andExpect(jsonPath("$.name", is("Karl")))
         .andExpect(jsonPath("$.salary", is(100000.00)))
         .andExpect(jsonPath("$.role", is("Technical Analyst")))
-        .andExpect(jsonPath("$.roleDescription", is("Analyze Technicals")))
-        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/detail/1")))
-        .andExpect(jsonPath("$._links.delete.href", is("http://localhost/employee/detail/delete/1")));
+        .andExpect(jsonPath("$.roleDescription", is("Analyze Technicals")));
         return r;
     }
 

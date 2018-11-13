@@ -78,8 +78,7 @@ public class EmployeeProjectControllerTest {
         .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
 //      .andDo(print())    
         .andExpect(jsonPath("$.empId", is(1)))    
-        .andExpect(jsonPath("$.projectId", is(1)))    
-        .andExpect(jsonPath("$._links.delete.href", is("http://localhost/employee/project/delete/1/1")));
+        .andExpect(jsonPath("$.projectId", is(1)));
         return r;
     }
 
@@ -87,13 +86,11 @@ public class EmployeeProjectControllerTest {
     public void testGet() throws Exception {
         server.expect(requestTo(EmployeeProjectController.serviceUrl + "/employee/project/1")).andExpect(method(HttpMethod.GET))
         .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON_UTF8).body(employeeProjectItemsJSON));
-        mvc.perform(get("/employee/project/1").accept(MediaType.APPLICATION_JSON_VALUE))
+        mvc.perform(get("/employee/project/1").accept(MediaType.APPLICATION_JSON_VALUE))        
         .andExpect(status().isOk())
         .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8"))
-        .andExpect(jsonPath("$._embedded.employeeProjectResourceList[0].empId", is(1)))    
-        .andExpect(jsonPath("$._embedded.employeeProjectResourceList[0].projectId", is(1)))
-        .andExpect(jsonPath("$._embedded.employeeProjectResourceList[0]._links.delete.href", is("http://localhost/employee/project/delete/1/1")))
-        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/project/1")))
+        .andExpect(jsonPath("$.[0].empId", is(1)))    
+        .andExpect(jsonPath("$.[0].projectId", is(1)))
         .andDo(document("get-employee-project"));
     }
 

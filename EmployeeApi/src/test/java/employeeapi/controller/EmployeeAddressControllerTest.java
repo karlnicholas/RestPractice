@@ -81,9 +81,7 @@ public class EmployeeAddressControllerTest {
         .andExpect(jsonPath("$.address3", is("Address 3")))
         .andExpect(jsonPath("$.address4", is("Address 4")))
         .andExpect(jsonPath("$.state", is("AZ")))
-        .andExpect(jsonPath("$.country", is("US")))
-        .andExpect(jsonPath("$._links.self.href", is("http://localhost/employee/address/1")))
-        .andExpect(jsonPath("$._links.delete.href", is("http://localhost/employee/address/delete/1")));
+        .andExpect(jsonPath("$.country", is("US")));
         return r;
     }
 
